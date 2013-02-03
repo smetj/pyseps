@@ -27,7 +27,6 @@ from wishbone.toolkit import QueueFunctions, Block
 from gevent import Greenlet, spawn, sleep, joinall
 import pymongo
 import json
-from configobj import ConfigObj
 from gevent import monkey;monkey.patch_all()
 
 class Tail(Greenlet, QueueFunctions, Block):
