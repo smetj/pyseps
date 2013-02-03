@@ -35,11 +35,11 @@ Setup
 -----
 Fork from github and run setup.py
 
-Setup a Shipper using the rabbitmq2mongodb.json bootstrap file
+Setup a shipper using the rabbitmq2mongodb.json bootstrap file
 
     $ pyseps debug --config rabbitmq2mongodb.json --pid rabbitmq2mongodb.pid
 
-Setup a Processing engine using the  pyseps.json bootstrap file
+Setup a processing engine using the  pyseps.json bootstrap file
     
     $ pyseps debug --config pyseps.json --pid pyseps.pid
 
@@ -48,6 +48,7 @@ In pyseps.json we have defined a queue called "pyseps:queries".  When this queue
 Submit to this queue following queries (as separate documents):
 
 {"id":"07fb983f-ca15-4e38-a3b7-b1e544dc64ce","name":"NonInformational","key":"broker_key","query":{"@fields.priority":{"$in":["1","2","3","4"]}}}
+
 {"id":"07fb983f-ca15-4e38-a3b7-b1e544dc64ce","name":"Informational","key":"broker_key","query":{"@fields.priority":{"$in":["5","6","7"]}}}
 
 
