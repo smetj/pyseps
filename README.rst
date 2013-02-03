@@ -54,11 +54,18 @@ Submit to this queue following queries (as separate documents):
 
 Breakdown of the query:
 
-id: A unique UUID which identifies the batch of queries.  When the ID changes all loaded and active queries are purged and replaced with the newly
-    arriving queries each sharing the same ID.
+id
+~~
+A unique UUID which identifies the batch of queries.  When the ID changes all loaded and active queries are purged and replaced with the newly arriving queries each sharing the same ID.
 
-name:   A name describing the query.
+name
+~~~~
+A name describing the query.
 
-key:    The broker routing key to which the matching record has to be be submitted.
+key
+~~~
+The broker routing key to which the matching record has to be be submitted.
 
-query:  The MongoDB query which needs to be evaluated against all newly added documents.
+query
+~~~~~
+The MongoDB query which needs to be evaluated against all newly added documents.
