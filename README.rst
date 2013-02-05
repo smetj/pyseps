@@ -47,9 +47,9 @@ Setup a processing engine using the  pyseps.json bootstrap file
 In pyseps.json we have defined a queue called "pyseps:queries".  When this queue doesn't exist it should be created.
 Submit to this queue following queries (as separate documents):
 
-{"id":"07fb983f-ca15-4e38-a3b7-b1e544dc64ce","name":"NonInformational","key":"broker_key","query":{"@fields.priority":{"$in":["1","2","3","4"]}}}
+{"id":"07fb983f-ca15-4e38-a3b7-b1e544dc64ca","name":"Important messages","key":"pyseps:important","query":{"@fields.priority":{"$in":["1","2","3","4"]}}}
+{"id":"07fb983f-ca15-4e38-a3b7-b1e544dc64ca","name":"Unimportant messages","key":"pyseps:unimportant","query":{"@fields.priority":{"$nin":["1","2","3","4"]}}}
 
-{"id":"07fb983f-ca15-4e38-a3b7-b1e544dc64ce","name":"Informational","key":"broker_key","query":{"@fields.priority":{"$in":["5","6","7"]}}}
 
 
 Breakdown of the query:

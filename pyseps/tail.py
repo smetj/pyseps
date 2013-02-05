@@ -23,13 +23,13 @@
 #  
 
 import logging
-from wishbone.toolkit import QueueFunctions, Block
+from wishbone.toolkit import QueueFunctions, Block, TimeFunctions
 from gevent import Greenlet, spawn, sleep, joinall
 import pymongo
 import json
 from gevent import monkey;monkey.patch_all()
 
-class Tail(Greenlet, QueueFunctions, Block):
+class Tail(Greenlet, QueueFunctions, Block, TimeFunctions):
     '''**A Pyseps modules which tails the capped collection for hits.**
             
     Parameters:        
@@ -46,7 +46,7 @@ class Tail(Greenlet, QueueFunctions, Block):
         - acknowledge           The query acknowledgements coming from broker.
     '''
     
-    def __init__(self, name, host, db, collection, query_file):
+    def __init__(self, name, host, db, collection):
         Greenlet.__init__(self)
         Block.__init__(self)
         QueueFunctions.__init__(self)
@@ -56,7 +56,6 @@ class Tail(Greenlet, QueueFunctions, Block):
         self.host=host
         self.db=db
         self.collection=collection
-        self.query_file=query_file
         self.mongo=None
         self.createQueue("queries")
         self.createQueue("acknowledge")
@@ -126,9 +125,9 @@ class Tail(Greenlet, QueueFunctions, Block):
         cursor = self.mongo.find(query,tailable=True,skip=skip,timeout=False)
         while self.block() == True:
             try:
-                for document in cursor:
+                for document in self.getDocuments(cursor):
                     self.logging.debug("%s got a hit."%(name))
-                    self.sendData({"header":{},"data":document},"inbox")
+                    self.sendData({"header":{"broker_exchange":"","broker_key":key},"data":document},"inbox")
             except:
                 pass
             if self.query_reload == True:
@@ -136,6 +135,11 @@ class Tail(Greenlet, QueueFunctions, Block):
                 break
             sleep(0.5)
         self.logging.info("Cursor %s has exit."%(name))
-                
+    
+    @TimeFunctions.do
+    def getDocuments(self, cursor):
+        for document in cursor:
+            yield document
+    
     def shutdown(self):
         pass

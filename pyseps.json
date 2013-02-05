@@ -1,8 +1,8 @@
 {
   "system":{
     "metrics":true,
-    "metrics_interval":10,
-    "metrics_dst":"logging"
+    "metrics_interval":1,
+    "metrics_dst":"table"
   },
   "bootstrap":{
     "queries":{
@@ -20,7 +20,7 @@
           "auto_create":true
        }
     },
-    "validate":{
+    "queries_validate":{
          "module":"wishbone.modules.jsonvalidator",
          "class":"JSONValidator",
          "variables":{
@@ -28,37 +28,28 @@
             "convert":true
          }
     },
-    "tail":{
+    "logs_tail":{
       "module":"pyseps.tail",
       "class":"Tail",
       "variables":{
         "host":"localhost",
         "db":"mongotails",
-        "collection":"input",
-        "query_file":"queries.ini"
-      }
-    },
-    "stdout":{
-      "module":"wishbone.modules.stdout",
-      "class":"STDOUT",
-      "variables":{
-        "purge":true,
-        "counter":false
+        "collection":"input"
       }
     }
   },
   "routingtable":{
     "queries.inbox":[
-      "validate.inbox"
+      "queries_validate.inbox"
     ],
-    "validate.outbox":[
-      "tail.queries"
+    "queries_validate.outbox":[
+      "logs_tail.queries"
     ],
-    "tail.acknowledge":[
+    "logs_tail.acknowledge":[
       "queries.acknowledge"
     ],
-    "tail.outbox":[
-      "stdout.inbox"
+    "logs_tail.inbox":[
+      "queries.outbox"
     ]
   }
 }

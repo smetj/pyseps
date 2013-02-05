@@ -1,11 +1,11 @@
 {
    "system":{
-      "metrics":false,
-      "metrics_interval":10,
-      "metrics_dst":"logging"
+      "metrics":true,
+      "metrics_interval":1,
+      "metrics_dst":"table"
    },
    "bootstrap":{
-      "broker":{
+      "logs_broker":{
          "module":"wishbone.iomodules.broker",
          "class":"Broker",
          "variables":{
@@ -19,7 +19,7 @@
             "delivery_mode":2
          }
       },
-      "validate":{
+      "logs_validate":{
          "module":"wishbone.modules.jsonvalidator",
          "class":"JSONValidator",
          "variables":{
@@ -27,7 +27,7 @@
             "convert":true
          }
       },
-      "mongodb":{
+      "logs_mongodb":{
         "module":"wishbone.iomodules.mongodb",
         "class":"MongoDB",
         "variables":{
@@ -37,17 +37,17 @@
           "capped":true,
           "max":1000000,
           "size":1000000,
-          "drop_db":true,
+          "drop_db":false,
           "dateconversions":["@timestamp"]
         }
       }
    },
    "routingtable":{
-      "broker.inbox":[
-        "validate.inbox"
+      "logs_broker.inbox":[
+        "logs_validate.inbox"
       ],
-      "validate.outbox":[
-        "mongodb.outbox"
+      "logs_validate.outbox":[
+        "logs_mongodb.outbox"
       ]
    }
 }
