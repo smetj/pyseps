@@ -52,7 +52,7 @@ Submit to this queue following queries (as separate documents):
     
     {"id":"07fb983f-ca15-4e38-a3b7-b1e544dc64ca","name":"Unimportant messages","key":"pyseps:unimportant","query":{"@fields.priority":{"$nin":["1","2","3","4"]}}}
 
-
+*You will have to create the queues in RabbitMQ manually for now*
 
 Breakdown of the query:
 
