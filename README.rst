@@ -5,7 +5,8 @@ Disclaimer: PySeps is currently a proof of concept and incomplete.
 
 What?
 -----
-A Python based Simple Event Processing Server framework.
+A Python based Simple Event Processing Server framework.  Consume JSON docs from a
+queue and forward them to other queues based on MongoDB queries.
 
 How?
 ----
