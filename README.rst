@@ -51,6 +51,8 @@ Documentation
 PySeps is still a POC and subject to change.  I'll wait writing documentation
 when it becomes more definite.
 
+.. image:: docs/diagram.png
+
 Setup
 -----
 Fork from github and run setup.py
