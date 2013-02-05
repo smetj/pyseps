@@ -70,3 +70,13 @@ The broker routing key to which the matching record has to be be submitted.
 query
 ~~~~~
 The MongoDB query which needs to be evaluated against all newly added documents.
+
+
+ToDo
+----
+
+- Also allow exchange definition in query to queue mapping.
+- Figure out a way to autocreate queue when the message is non routable.
+- Tests
+- Federate searches in a tree structure over different nodes to scale out. (hmm)
+- ...
