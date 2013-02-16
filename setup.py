@@ -75,8 +75,12 @@ setup(
     entry_points={
         'console_scripts': [
 		'pyseps = pyseps.pyseps:main'
-        ]
-        },
+        ],
+
+	'pyseps.module': [
+                'MongoTailCursor=pyseps.tail:Tail'
+        ],
+    },
 
     zip_safe=False,
     )

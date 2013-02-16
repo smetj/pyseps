@@ -1,13 +1,18 @@
 {
   "system":{
-    "metrics":true,
-    "metrics_interval":1,
-    "metrics_dst":"table"
   },
+  "metrics":{
+      "enable":true,
+      "group":"wishbone.metrics",
+      "module":"Log",
+      "interval":1,
+      "variables":{
+      }
+   },
   "bootstrap":{
     "queries":{
-       "module":"wishbone.iomodules.broker",
-       "class":"Broker",
+       "group":"wishbone.iomodule",
+       "name":"Broker",
        "variables":{
           "host":"localhost",
           "vhost":"/",
@@ -21,16 +26,16 @@
        }
     },
     "queries_validate":{
-         "module":"wishbone.modules.jsonvalidator",
-         "class":"JSONValidator",
+         "group":"wishbone.module",
+         "name":"JSONValidator",
          "variables":{
             "schema":false,
             "convert":true
          }
     },
     "logs_tail":{
-      "module":"pyseps.tail",
-      "class":"Tail",
+      "group":"pyseps",
+      "name":"Tail",
       "variables":{
         "host":"localhost",
         "db":"mongotails",
