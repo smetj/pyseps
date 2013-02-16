@@ -60,11 +60,11 @@ Fork from github and run setup.py
 You can download the bootstrap files from my experiments repo here:
 https://github.com/smetj/experiments/tree/master/pyseps
 
-Setup a shipper using the rabbitmq2mongodb.json bootstrap file
+Setup a shipper using the rabbitmq.json bootstrap file:
 
-    $ pyseps debug --config rabbitmq2mongodb.json --pid rabbitmq2mongodb.pid
+    $ pyseps debug --config rabbitmq.json --pid rabbitmq.pid
 
-Setup a processing engine using the  pyseps.json bootstrap file
+Setup a processing engine using the  pyseps.json bootstrap file:
     
     $ pyseps debug --config pyseps.json --pid pyseps.pid
 
