@@ -41,6 +41,7 @@ Motivation
 ----------
 The reason to use MongoDB is because we can take advantage of some its unique
 features which really fit our scenario of document stream processing such as:
+
 - a document query language
 - capped collections
 - tailing cursors
@@ -56,6 +57,8 @@ when it becomes more definite.
 Setup
 -----
 Fork from github and run setup.py
+You can download the bootstrap files from my experiments repo here:
+https://github.com/smetj/experiments/tree/master/pyseps
 
 Setup a shipper using the rabbitmq2mongodb.json bootstrap file
 
