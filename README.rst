@@ -74,14 +74,9 @@ Usage
 In pyseps.json we have defined a queue called "pyseps:queries".
 Submit following queries to the *pyseps:queries* queue as separate documents:
 
-    {"id":"07fb983f-ca15-4e38-a3b7-b1e544dc64ca","name":"Important messages","key":"pyseps:important","query":{"@fields.priority":{"$in":["1","2","3","4"]}}}
+    {"id":"07fb983f-ca15-4e38-a3b7-b1e544dc64ca","name":"Important messages","exchange":"","key":"pyseps:important","query":{"@fields.priority":{"$in":["1","2","3","4"]}}}
     
-    {"id":"07fb983f-ca15-4e38-a3b7-b1e544dc64ca","name":"Unimportant messages","key":"pyseps:unimportant","query":{"@fields.priority":{"$nin":["1","2","3","4"]}}}
-
-*You will have to create the queues defined in "key" manually for now*
-
-The goal obviously is that you have a tool (and api) at your disposal which allows
-you to do this a bit more intuitively.
+    {"id":"07fb983f-ca15-4e38-a3b7-b1e544dc64ca","name":"Unimportant messages","exchange":"","key":"pyseps:unimportant","query":{"@fields.priority":{"$nin":["1","2","3","4"]}}}
 
 
 Breakdown of the query:
