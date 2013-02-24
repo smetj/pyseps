@@ -103,9 +103,13 @@ name
 ~~~~
 A name describing the query.
 
+exchange
+~~~~~~~~
+The broker exchange to which matching documents have to be submitted.
+
 key
 ~~~
-The broker routing key to which the matching record has to be be submitted.
+The broker routing key used to submit matching documents.
 
 query
 ~~~~~
