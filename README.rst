@@ -64,7 +64,10 @@ Setup
 -----
 
 1. Install WishBone v0.3 from https://github.com/smetj/wishbone/tree/0.3
-2. Install wb_broker https://github.com/smetj/wishboneModules/tree/master/iomodules/wb_broker
+2. Install the required WishBone modules:
+2.1. Install wb_broker https://github.com/smetj/wishboneModules/tree/master/iomodules/wb_broker
+2.2. Install wb_jsonvalidator https://github.com/smetj/wishboneModules/tree/master/modules/wb_jsonvalidator
+2.3. Install wb_log https://github.com/smetj/wishboneModules/tree/master/metrics/wb_log
 3. Install PySeps from https://github.com/smetj/pyseps
 4. Get and modify if required some PySeps bootstrap files from https://github.com/smetj/experiments/tree/master/pyseps
 
