@@ -78,7 +78,7 @@ setup(
         ],
 
 	'pyseps.module': [
-                'MongoTailCursor=pyseps.tail:Tail'
+                'TailingCursor=pyseps.tailingcursor:TailingCursor'
         ],
     },
 
