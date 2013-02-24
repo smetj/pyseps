@@ -56,7 +56,7 @@ when it becomes more definite.
 
 Setup
 -----
-Fork from github and run setup.py
+Clone from github and run setup.py
 You can download the bootstrap files from my experiments repo here:
 https://github.com/smetj/experiments/tree/master/pyseps
 
