@@ -121,9 +121,8 @@ The MongoDB query which needs to be evaluated against all newly added documents.
 ToDo
 ----
 
-- Also allow exchange definition in query to queue mapping.
-- Figure out a way to autocreate queues when the message is non routable.
-- Provide API and CLI to control pyseps setup.
+- Provide API and CLI to control pyseps setup. Adding queries by manually adding
+them to the queue is not friendly but meant to be done through an API of some sort. 
 - Federate searches in a tree structure over different nodes to scale out. (hmm)
 - Tests
 - ...
