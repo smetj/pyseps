@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  tail.py
+#  tailingcursor.py
 #  
 #  Copyright 2013 Jelle Smet development@smetj.net
 #  
