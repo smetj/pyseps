@@ -66,8 +66,6 @@ setup(
     scripts=[],
 
     provides=[],
-    dependency_links = ['http://github.com/SiteSupport/gevent/tarball/master#egg=gevent-1.0rc1'],
-    install_requires=['wishbone'],
     namespace_packages=[],
     packages=find_packages(),
     include_package_data=True,
