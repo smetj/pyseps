@@ -5,8 +5,14 @@ Disclaimer: PySeps is currently a proof of concept and incomplete.
 
 What?
 -----
-A Python based Simple Event Processing Server framework.  Consume JSON docs from
-RabbitMQ and forward them real time to other queues using MongoDB query syntax.
+A Python based Simple Event Processing Server framework.
+Consume or accept JSON documents from a source and forward them real time to a 
+specific AMQP queue using MongoDB query syntax.
+
+Euh?
+----
+Ever had to extract and forward matches out of a constant stream of JSON documents
+using complex conditionals?
 
 How?
 ----
@@ -56,9 +62,13 @@ when it becomes more definite.
 
 Setup
 -----
-Clone from github and run setup.py
-You can download the bootstrap files from my experiments repo here:
-https://github.com/smetj/experiments/tree/master/pyseps
+
+1. Install WishBone v0.3 from https://github.com/smetj/wishbone/tree/0.3
+2. Install wb_broker https://github.com/smetj/wishboneModules/tree/master/iomodules/wb_broker
+3. Install PySeps from https://github.com/smetj/pyseps
+4. Get and modify if required some PySeps bootstrap files from https://github.com/smetj/experiments/tree/master/pyseps
+
+*Install will become simpler once WishBone 0.3 is released.*
 
 Setup a shipper using the rabbitmq.json bootstrap file:
 
@@ -77,6 +87,8 @@ Submit following queries to the *pyseps:queries* queue as separate documents:
     {"id":"07fb983f-ca15-4e38-a3b7-b1e544dc64ca","name":"Important messages","exchange":"","key":"pyseps:important","query":{"@fields.priority":{"$in":["1","2","3","4"]}}}
     
     {"id":"07fb983f-ca15-4e38-a3b7-b1e544dc64ca","name":"Unimportant messages","exchange":"","key":"pyseps:unimportant","query":{"@fields.priority":{"$nin":["1","2","3","4"]}}}
+    
+    {"id":"07fb983f-ca15-4e38-a3b7-b1e544dc64ca","name":"abcd","exchange":"alphabet","key":"abcd","query":{"0":{"$regex":"^a.*"},"1":{"$regex":"^b.*"},"2":{"$regex":"^c.*"},"3":{"$regex":"^d.*"}}}
 
 
 Breakdown of the query:
