@@ -10,7 +10,7 @@ returns documents they are submitted to the RabbitMQ queue the query is mapped t
 It's up to another process or application to take action on the documents arriving
 in the queue mapped to the query.
 
-A PySeps setup consists out of 2 parts:
+A PySeps TailingCursor setup consists out of 2 parts:
 
 Shipper
 ~~~~~~~
@@ -20,9 +20,9 @@ functionality which consumes the documents from RabbitMQ and writes them into
 MongoBD.  You are not obliged to use this.  There are other ways to get the JSON
 events into MongoDB, your mileage may vary.
 
-Processing engine
-~~~~~~~~~~~~~~~~~
-The processing engine is what it's all about.
+TailingCursor engine
+~~~~~~~~~~~~~~~~~~~~
+The TailingCursor engine is what it's all about.
 So the documents arrive in a MongoDB capped collection.  That means each newly 
 inserted document is matched against all active tailing cursors.
 PySeps receives the queries it should evaluate by consuming a dedicated queue.
@@ -33,12 +33,8 @@ corresponding RabbitMQ queue.
 
 Motivation
 ----------
-The reason to use MongoDB is because we can take advantage of some its unique
-features which really fit our scenario of document stream processing such as:
-
-- a document query language
-- capped collections
-- tailing cursors
+The reason to use MongoDB is because we can take advantage of the document query
+language which comes with MongoDB.
 
 
 Documentation
@@ -49,6 +45,19 @@ Documentation
 
 Usage
 -----
+
+Setup a shipper using the rabbitmq.json bootstrap file:
+https://github.com/smetj/experiments/blob/master/pyseps/FeedMongoDB/rabbitmq.json
+
+    $ pyseps debug --config rabbitmq.json --pid rabbitmq.pid
+
+
+Setup a processing engine using the "tailingcursor.json" bootstrap file
+https://github.com/smetj/experiments/blob/master/pyseps/tailingcursor.json
+
+    
+    $ pyseps debug --config tailingcursor.json --pid pyseps.pid
+
 
 In tailingcursor.json we have defined a queue called "pyseps:queries".
 Submit following queries to the *pyseps:queries* queue as separate documents:

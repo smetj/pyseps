@@ -16,7 +16,6 @@ documents using complex conditionals?
 
 How?
 ----
-
 PySeps has different "engines" which take care of the matching.
 
 TailingCursor:
@@ -41,3 +40,21 @@ MapMatch:
 
 SequentialMatch:
 ~~~~~~~~~~~~~~~~
+
+
+Setup
+-----
+
+Pypi
+~~~~
+
+	$ easy_setup pyseps
+
+GitHub
+~~~~~~
+
+	$ git clone git@github.com:smetj/pyseps.git
+
+	$ cd pyseps
+
+	$ python setup.py install
