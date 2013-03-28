@@ -56,7 +56,7 @@ Pypi
 GitHub
 ~~~~~~
 
-	$ git clone git@github.com:smetj/pyseps.git
+	$ git clone https://github.com/smetj/pyseps.git
 
 	$ cd pyseps
 
