@@ -67,6 +67,7 @@ setup(
 
     provides=[],
     namespace_packages=[],
+    install_requires=['wishbone','wb_broker','wb_mongodb','wb_dictgenerator'],
     packages=find_packages(),
     include_package_data=True,
     
