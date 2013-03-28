@@ -32,7 +32,7 @@ arriving in the queue mapped to the query.
 The pyseps module called TailingCursor does exactly that.  For more
 information have a look at:
 
-http://
+https://github.com/smetj/pyseps/tree/master/pyseps/tailingcursor
 
 MapMatch:
 ~~~~~~~~~
