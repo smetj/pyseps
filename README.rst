@@ -51,7 +51,7 @@ Setup
 Pypi
 ~~~~
 
-	$ easy_setup pyseps
+	$ easy_install pyseps
 
 GitHub
 ~~~~~~
