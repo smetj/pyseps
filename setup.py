@@ -77,7 +77,8 @@ setup(
         ],
 
 	'pyseps.module': [
-                'TailingCursor=pyseps.tailingcursor:TailingCursor'
+                'TailingCursor=pyseps.tailingcursor:TailingCursor',
+                'MapMatch=pyseps.mapmatch:MapMatch'
         ],
     },
 
