@@ -18,6 +18,8 @@ document matching.
 
 TailingCursor:
 ~~~~~~~~~~~~~~
+https://github.com/smetj/pyseps/tree/master/pyseps/tailingcursor
+
 By creating a tailing cursor containing a MongoDB query and by applying that
 cursor to a capped collection which constantly receives new documents,  we
 have a quite powerful filtering mechanism to extract from a constant the
@@ -25,17 +27,18 @@ documents we want.
 
 .. image:: docs/diagram.png
 
-https://github.com/smetj/pyseps/tree/master/pyseps/tailingcursor
 
 MapMatch:
 ~~~~~~~~~
+https://github.com/smetj/pyseps/tree/master/pyseps/mapmatch
+
 The MapMatch engine converts a sequence of evaluation rules into a map to
 match the most requested evaluations first in an attempt to have a statistical
 advantage over dumb sequential evaluation of all rules until a match is found.
 If a match occurs the document is forwarded to the WishBone queue associated
 with the matching rule.
 
-https://github.com/smetj/pyseps/tree/master/pyseps/mapmatch
+
 
 Setup
 -----
