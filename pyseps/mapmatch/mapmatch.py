@@ -74,7 +74,6 @@ class MapMatch(PrimitiveActor):
             optimized[item] = sorted([ (key,optimized[item][key]) for key in optimized[item] ], key=lambda value: len(value[1]), reverse=True)
 
         optimized = sorted(optimized.iteritems(), key=lambda value: sum(len(v[1]) for v in value[1]), reverse=True)
-        print optimized
         return (optimized, rules)
 
     def match(self, rulenames, map, data):
