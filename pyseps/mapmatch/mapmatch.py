@@ -74,6 +74,7 @@ class MapMatch(PrimitiveActor):
             optimized[item] = sorted([ (key,optimized[item][key]) for key in optimized[item] ], key=lambda value: len(value[1]), reverse=True)
 
         optimized = sorted(optimized.iteritems(), key=lambda value: sum(len(v[1]) for v in value[1]), reverse=True)
+        print optimized
         return (optimized, rules)
 
     def match(self, rulenames, map, data):
@@ -99,10 +100,10 @@ class MapMatch(PrimitiveActor):
         Executes differnt forms of matching.
         '''
         if rule.startswith('re:'):
-            if re.match(rule[3:],data):
+            if re.search(rule[3:],data):
                 return True
         elif rule.startswith('nre:'):
-            if not re.match(rule[4:],data):
+            if not re.search(rule[4:],data):
                 return True
         else:
             self.logging.warn("%s is an invalid match rule."%(rule))
