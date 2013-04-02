@@ -2,10 +2,10 @@ MapMatch
 ========
 
 The MapMatch engine converts a sequence of evaluation rules into a map to
-match the most requested evaluations first in an attempt to have a statistical
-advantage over dumb sequential evaluation of all rules until a match is found.
-If a match occurs the document is forwarded to the WishBone queue associated
-with the matching rule.
+process the most requested evaluations first in an attempt to have a
+statistical advantage over dumb sequential evaluation of all rules until a
+match is found. If a match occurs the document is forwarded to the WishBone
+queue associated with the matching rule.
 
 Matching rules:
 ---------------
