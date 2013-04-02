@@ -22,8 +22,8 @@ https://github.com/smetj/pyseps/tree/master/pyseps/tailingcursor
 
 By creating a tailing cursor containing a MongoDB query and by applying that
 cursor to a capped collection which constantly receives new documents,  we
-have a quite powerful filtering mechanism to extract from a constant the
-documents we want.
+have a quite powerful filtering mechanism to extract from a constant stream
+the documents we want.
 
 .. image:: docs/diagram.png
 
