@@ -5,45 +5,37 @@ Disclaimer: PySeps is currently a proof of concept and incomplete.
 
 What?
 -----
-A Python based Simple Event Processing Server framework.
-Consume or accept JSON documents from a source and forward them real time to
-another destination using different types of query engines.
-
-Euh?
-----
-Ever had to extract and forward matches out of a constant stream of JSON
-documents using complex conditionals?
+A Python based Simple Event Processing Server framework. Consume a stream of
+documents and forward matching documents to another destination using
+different types of query engines.
 
 How?
 ----
-PySeps has different "engines" which take care of the matching.
+PySeps is build on the WishBone framework which allows you to build coroutine
+based event pipelines.  PySeps delivers a set of modules which can be plugged into
+the WishBone framework.  Each module acts as a different engine to perform the
+document matching.
 
 TailingCursor:
 ~~~~~~~~~~~~~~
-
-Create tailing cursors out of MongoDB queries and apply them to a capped
-collection.  Each cursor is "mapped" to a RabbitMQ queue. Each time a cursor
-returns documents they are submitted to the RabbitMQ queue the query is mapped
-to.  It's up to another process or application to take action on the documents
-arriving in the queue mapped to the query.
+By creating a tailing cursor containing a MongoDB query and by applying that
+cursor to a capped collection which constantly receives new documents,  we
+have a quite powerful filtering mechanism to extract from a constant the
+documents we want.
 
 .. image:: docs/diagram.png
-
-The pyseps module called TailingCursor does exactly that.  For more
-information have a look at:
 
 https://github.com/smetj/pyseps/tree/master/pyseps/tailingcursor
 
 MapMatch:
 ~~~~~~~~~
+The MapMatch engine converts a sequence of evaluation rules into a map to
+match the most requested evaluations first in an attempt to have a statistical
+advantage over dumb sequential evaluation of all rules until a match is found.
+If a match occurs the document is forwarded to the WishBone queue associated
+with the matching rule.
 
-n/a
-
-SequentialMatch:
-~~~~~~~~~~~~~~~~
-
-n/a
-
+https://github.com/smetj/pyseps/tree/master/pyseps/mapmatch
 
 Setup
 -----

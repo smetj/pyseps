@@ -24,22 +24,22 @@
 #
 
 from wishbone.toolkit import PrimitiveActor
+from jsonschema import Validator
 import json
 import re
 
 class MapMatch(PrimitiveActor):
-    '''**The MapMatch module converts a set of rules into an optimized map and
-    uses this map to match incoming dictionaries.**
+    '''**The MapMatch module matches documents against a user provided ruleset
+    and submits the matching documents to a Wishbone queue of choice.**
 
-    Optimized in this context means the keys which have to be evaluated the most
-    are evaluated first.  Once a rule has all conditions fullfilled, no further
-    evaluation is done.
-
-    This module is part of the PySeps project.
+    The set of rules is converted in such a way that the fields which will most
+    likely match the most are evaluated first.  This to speed up evaluation.
+    Keep in mind, once a rule matched, further matching stops.
 
     Parameters:
 
         - name (str):    The instance name when initiated.
+        -filename (str): The filename containing the matching rules.
 
     Queues:
 
@@ -47,15 +47,15 @@ class MapMatch(PrimitiveActor):
         - outbox:   Outgoing events.
     '''
 
-    def __init__(self, name, ruledb="rules.txt"):
+    def __init__(self, name, filename="rules.json"):
         PrimitiveActor.__init__(self, name)
-        (self.map, self.rules)=self.generateMap(ruledb)
+        (self.map, self.rules)=self.generateMap(filename)
 
-    def generateMap(self, rules):
-    	'''Takes a list of dictionaries and converts them to a matchmap.
+    def generateMap(self, filename):
+    	'''Reads a filename containing MapMatch rules and returns an optimized map and the rules.
     	'''
 
-        f = open (rules, 'r')
+        f = open (filename, 'r')
         rules=json.loads("\n".join(f.readlines()))
         f.close()
 
@@ -87,11 +87,27 @@ class MapMatch(PrimitiveActor):
         for field in map:
             if field[0] in data:
                 for match in field[1]:
-                    if re.match(match[0], data[field[0]]):
+                    if self.__typeMatch(match[0], data[field[0]]):
                         for rule in match[1]:
                             state[rule[0]]+=1
                             if rule[1] == state[rule[0]] and state[rule[0]] <= len(data):
                                 return rule[0]
+        return False
+
+    def __typeMatch(self, rule, data):
+        '''
+        Executes differnt forms of matching.
+        '''
+        if rule.startswith('re:'):
+            if re.match(rule[3:],data):
+                return True
+        elif rule.startswith('nre:'):
+            if not re.match(rule[4:],data):
+                return True
+        else:
+            self.logging.warn("%s is an invalid match rule."%(rule))
+            return False
+
         return False
 
     def consume(self,doc):
