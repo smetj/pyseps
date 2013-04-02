@@ -42,9 +42,7 @@ regex:
 ~~~~~~
 
 Condition which have to be regular expressions should start with *re:* or
-*!re* for positive and negative regular expressions respectively. Keep in mind
-that the regular expressions **always** try to match from the beginning of the
-string.
+*!re* for positive and negative regular expressions respectively.
 
 examples:
 
