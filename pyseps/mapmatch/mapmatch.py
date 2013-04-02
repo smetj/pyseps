@@ -101,7 +101,7 @@ class MapMatch(PrimitiveActor):
         if rule.startswith('re:'):
             if re.search(rule[3:],data):
                 return True
-        elif rule.startswith('nre:'):
+        elif rule.startswith('!re:'):
             if not re.search(rule[4:],data):
                 return True
         else:
