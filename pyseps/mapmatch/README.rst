@@ -72,6 +72,6 @@ https://github.com/smetj/experiments/tree/master/pyseps/MapMatch
 Disclaimer:
 -----------
 
-**Install the latest Wishbone module from GitHub
+*Install the latest Wishbone module from GitHub
 https://github.com/smetj/wishbone since this module requires queue auto-
-creation.**
+creation.*
