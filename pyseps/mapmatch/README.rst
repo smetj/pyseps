@@ -17,6 +17,7 @@ The file containing the matching rules must be valid JSON and should have
 following structure:
 
 ::
+
 	{
 	"rule0":{"queue":{"broker":{"broker_key":"rule0","broker_exchange":""}},"conditions":{"1":"re:a"}},
 	"rule1":{"queue":{"broker":{"broker_key":"rule1","broker_exchange":""}},"conditions":{"1":"re:b","2":"re:c"}},
