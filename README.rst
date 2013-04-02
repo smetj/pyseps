@@ -57,3 +57,8 @@ GitHub
 	$ cd pyseps
 
 	$ python setup.py install
+
+Examples
+--------
+
+See https://github.com/smetj/experiments/tree/master/pyseps
