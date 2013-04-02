@@ -30,22 +30,6 @@ following structure:
 Breakdown of a rule:
 ~~~~~~~~~~~~~~~~~~~~
 
-::
-
-	"rule01":						     # The name of the rule.  Should be unique.
-		{"queue":
-			{"broker":                   # The Wishbone queue bound to the MapMatch module to submit the document to.
-				{"broker_key":"matches", # Value to add to the message header which makes sense for some Wishbone module.
-				 "broker_exchange":""    # Value to add to the message header which makes sense for some Wishbone module.
-				}
-			},
-		 "conditions":
-		 	{"field1":                # The field to match.
-		 		"re:.*?about.*"}      # A regex to match the content of the field.
-		}
-::
-
-
 A rule consists out of one or more conditions.  Each individual condition
 within a rule should match before the complete rule is considered to be a
 match.
