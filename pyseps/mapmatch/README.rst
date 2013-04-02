@@ -17,14 +17,13 @@ The file containing the matching rules must be valid JSON and should have
 following structure:
 
 ::
-
-{
-"rule0":{"queue":{"broker":{"broker_key":"rule0","broker_exchange":""}},"conditions":{"1":"re:a"}},
-"rule1":{"queue":{"broker":{"broker_key":"rule1","broker_exchange":""}},"conditions":{"1":"re:b","2":"re:c"}},
-"rule2":{"queue":{"broker":{"broker_key":"rule2","broker_exchange":""}},"conditions":{"1":"re:d","2":"re:e","3":"re:f"}},
-"rule3":{"queue":{"broker":{"broker_key":"rule3","broker_exchange":""}},"conditions":{"1":"re:g","2":"re:h","3":"re:i","4":"re:j"}},
-"rule4":{"queue":{"broker":{"broker_key":"rule4","broker_exchange":""}},"conditions":{"1":"re:k","2":"re:l","3":"re:m","4":"re:n","5":"re:o"}}
-}::
+	{
+	"rule0":{"queue":{"broker":{"broker_key":"rule0","broker_exchange":""}},"conditions":{"1":"re:a"}},
+	"rule1":{"queue":{"broker":{"broker_key":"rule1","broker_exchange":""}},"conditions":{"1":"re:b","2":"re:c"}},
+	"rule2":{"queue":{"broker":{"broker_key":"rule2","broker_exchange":""}},"conditions":{"1":"re:d","2":"re:e","3":"re:f"}},
+	"rule3":{"queue":{"broker":{"broker_key":"rule3","broker_exchange":""}},"conditions":{"1":"re:g","2":"re:h","3":"re:i","4":"re:j"}},
+	"rule4":{"queue":{"broker":{"broker_key":"rule4","broker_exchange":""}},"conditions":{"1":"re:k","2":"re:l","3":"re:m","4":"re:n","5":"re:o"}}
+	}::
 
 Breakdown of a rule:
 ~~~~~~~~~~~~~~~~~~~~
