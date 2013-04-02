@@ -16,6 +16,8 @@ Format:
 The file containing the matching rules must be valid JSON and should have
 following structure:
 
+::
+
 	{
 	"a":{"queue":{"broker":{"broker_key":"a","broker_exchange":""}},"conditions":{"1":"re:a"}},
 	"ab":{"queue":{"broker":{"broker_key":"ab","broker_exchange":""}},"conditions":{"1":"re:a","2":"re:b"}},
@@ -23,10 +25,12 @@ following structure:
 	"abcd":{"queue":{"broker":{"broker_key":"abcd","broker_exchange":""}},"conditions":{"1":"re:a","2":"re:b","3":"re:c","4":"re:d"}},
 	"abcde":{"queue":{"broker":{"broker_key":"abcde","broker_exchange":""}},"conditions":{"1":"re:a","2":"re:b","3":"re:c","4":"re:d","5":"re:e"}}
 	}
-
+::
 
 Breakdown of a rule:
 ~~~~~~~~~~~~~~~~~~~~
+
+::
 
 	"rule01":						     # The name of the rule.  Should be unique.
 		{"queue":
@@ -39,6 +43,7 @@ Breakdown of a rule:
 		 	{"field1":                # The field to match.
 		 		"re:.*?about.*"}      # A regex to match the content of the field.
 		}
+::
 
 
 A rule consists out of one or more conditions.  Each individual condition
