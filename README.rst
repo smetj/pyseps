@@ -16,17 +16,8 @@ based event pipelines.  PySeps delivers a set of modules which can be plugged in
 the WishBone framework.  Each module acts as a different engine to perform the
 document matching.
 
-TailingCursor:
-~~~~~~~~~~~~~~
-https://github.com/smetj/pyseps/tree/master/pyseps/tailingcursor
-
-By creating a tailing cursor containing a MongoDB query and by applying that
-cursor to a capped collection which constantly receives new documents,  we
-have a quite powerful filtering mechanism to extract from a constant stream
-the documents we want.
-
-.. image:: docs/diagram.png
-
+Engines:
+--------
 
 MapMatch:
 ~~~~~~~~~
@@ -38,6 +29,16 @@ advantage over dumb sequential evaluation of all rules until a match is found.
 If a match occurs the document is forwarded to the WishBone queue associated
 with the matching rule.
 
+TailingCursor:
+~~~~~~~~~~~~~~
+https://github.com/smetj/pyseps/tree/master/pyseps/tailingcursor
+
+By creating a tailing cursor containing a MongoDB query and by applying that
+cursor to a capped collection which constantly receives new documents,  we
+have a quite powerful filtering mechanism to extract from a constant stream
+the documents we want.
+
+.. image:: docs/diagram.png
 
 
 Setup

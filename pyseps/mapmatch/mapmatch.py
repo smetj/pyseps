@@ -39,7 +39,7 @@ class MapMatch(PrimitiveActor):
     Parameters:
 
         - name (str):    The instance name when initiated.
-        -filename (str): The filename containing the matching rules.
+        - filename (str): The filename containing the matching rules.
 
     Queues:
 
