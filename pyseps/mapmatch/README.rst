@@ -47,16 +47,16 @@ Condition which have to be regular expressions should start with *re:* or
 examples:
 
 *"re:qwerty"*
-Matches if the string is equal to "qwerty".
+Matches if the string contains "qwerty".
 
-*"re:qwerty.*"*
+*"re:^qwerty.*"*
 Matches if the string starts with "qwerty".
 
-*"re:.*?qwerty.*"*
-Matches if the string has "querty" somewhere in the middle.
+*"!re:^qwerty"*
+Matches if the string is NOT equal to "qwerty".
 
 *"!re:qwerty"*
-Matches if the string is NOT equal to "qwerty".
+Matches if the string does NOT contain"qwerty".
 
 
 Usage:
