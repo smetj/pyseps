@@ -18,8 +18,7 @@ following structure:
 
 ::
 
-{
-	"rule0":{"queue":{"broker":{"broker_key":"rule0","broker_exchange":""}},"conditions":{"1":"re:a"}},
+{	"rule0":{"queue":{"broker":{"broker_key":"rule0","broker_exchange":""}},"conditions":{"1":"re:a"}},
 	"rule1":{"queue":{"broker":{"broker_key":"rule1","broker_exchange":""}},"conditions":{"1":"re:b","2":"re:c"}},
 	"rule2":{"queue":{"broker":{"broker_key":"rule2","broker_exchange":""}},"conditions":{"1":"re:d","2":"re:e","3":"re:f"}},
 	"rule3":{"queue":{"broker":{"broker_key":"rule3","broker_exchange":""}},"conditions":{"1":"re:g","2":"re:h","3":"re:i","4":"re:j"}},
