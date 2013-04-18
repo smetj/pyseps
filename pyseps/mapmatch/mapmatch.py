@@ -24,9 +24,14 @@
 #
 
 from wishbone.toolkit import PrimitiveActor
-from jsonschema import Validator
+from gevent import spawn
+from glob import glob
+from os import path
+import gevent_inotifyx as inotify
 import json
+import yaml
 import re
+
 
 class MapMatch(PrimitiveActor):
     '''**The MapMatch module matches documents against a user provided ruleset
@@ -39,36 +44,64 @@ class MapMatch(PrimitiveActor):
     Parameters:
 
         - name (str):    The instance name when initiated.
-        - filename (str): The filename containing the matching rules.
+        - ruledir (str): The directory containing the rulesThe filename containing the matching rules.
 
     Queues:
 
         - inbox:    Incoming events.
         - outbox:   Outgoing events.
+        - rules:    Incoming rules.
     '''
 
-    def __init__(self, name, filename="rules.json"):
+    def __init__(self, name, ruledir='./'):
         PrimitiveActor.__init__(self, name)
-        (self.map, self.rules)=self.generateMap(filename)
+        self.createQueue("rules")
+        (self.map,self.rules) = self.readDirectory(ruledir)
+        spawn(self.monitorDirectory,ruledir)
 
-    def generateMap(self, filename):
-    	'''Reads a filename containing MapMatch rules and returns an optimized map and the rules.
-    	'''
+    def monitorDirectory(self, directory):
+        '''Monitors the given directory for changes.'''
 
-        f = open (filename, 'r')
-        rules=json.loads("\n".join(f.readlines()))
-        f.close()
+        self.logging.info('Monitoring %s'%(directory))
+        fd = inotify.init()
+        wb = inotify.add_watch(fd, directory, inotify.IN_CLOSE_WRITE+inotify.IN_DELETE)
+        while self.block() == True:
+            events = inotify.get_events(fd)
+            (self.map,self.rules) = self.readDirectory(directory)
 
+    def readDirectory(self, directory):
+        '''Reads the content of the given directory and creates a dict
+        containing the rules.'''
+        self.logging.info('Loading rules from directory %s'%(directory))
+        rules={}
+        for filename in glob("%s/*.yml"%(directory)):
+            f=open (filename,'r')
+            rules[path.basename(filename).rstrip(".yml")]=yaml.load("\n".join(f.readlines()))
+            f.close()
+        return self.generateMap(rules)
+
+    def generateMap(self, rules):
+
+        ''' This function is called upon each
+        document arriving in the self.rules queue. One document is expected to
+        contain all matching rules.  Upon receiving a new set of rules, the
+        previous one is discarded. Converts data into a Map which gives us
+        statistical advantage in finding matches.
+
+        The outgoing map has following structure:
+        '''
+
+        self.logging.info('A new set of rules received.')
         optimized={}
         for rule in rules:
-            for condition in rules[rule]["conditions"]:
+            for condition in rules[rule]["condition"]:
                 if optimized.has_key(condition):
-                    if optimized[condition].has_key(rules[rule]["conditions"][condition]):
-                        optimized[condition][rules[rule]["conditions"][condition]].append((rule, len(rules[rule]["conditions"])))
+                    if optimized[condition].has_key(rules[rule]["condition"][condition]):
+                        optimized[condition][rules[rule]["condition"][condition]].append((rule, len(rules[rule]["condition"])))
                     else:
-                        optimized[condition][rules[rule]["conditions"][condition]]=[(rule, len(rules[rule]["conditions"]))]
+                        optimized[condition][rules[rule]["condition"][condition]]=[(rule, len(rules[rule]["condition"]))]
                 else:
-                    optimized[condition]={rules[rule]["conditions"][condition]:[(rule, len(rules[rule]["conditions"]))]}
+                    optimized[condition]={rules[rule]["condition"][condition]:[(rule, len(rules[rule]["condition"]))]}
 
         for item in optimized:
             optimized[item] = sorted([ (key,optimized[item][key]) for key in optimized[item] ], key=lambda value: len(value[1]), reverse=True)
@@ -80,11 +113,13 @@ class MapMatch(PrimitiveActor):
         '''
         Matches the record
         '''
+
         state={}
         #state={x:0 for x in rulenames}
         for x in rulenames:
             state[x]=0
         for field in map:
+
             if field[0] in data:
                 for match in field[1]:
                     if self.__typeMatch(match[0], data[field[0]]):
@@ -96,8 +131,9 @@ class MapMatch(PrimitiveActor):
 
     def __typeMatch(self, rule, data):
         '''
-        Executes differnt forms of matching.
+        Executes different forms of matching.
         '''
+
         if rule.startswith('re:'):
             if re.search(rule[3:],data):
                 return True
@@ -110,13 +146,15 @@ class MapMatch(PrimitiveActor):
 
         return False
 
-    def consume(self,doc):
-
+    def consume(self, doc):
         result = self.match(self.rules.keys(), self.map, doc["data"])
         if result != False:
-            for queue in self.rules[result]["queue"]:
-                doc["header"].update(self.rules[result]["queue"][queue])
-                self.putData(doc,queue)
+            doc["header"]["rule"]=result
+            self.putData(doc)
+            # for queue in self.rules[result]["queue"]:
+            #     doc["header"].update(self.rules[result]["queue"][queue])
+            #     print doc
+            #     self.putData(doc)
 
     def shutdown(self):
         self.logging.info('Shutdown')
