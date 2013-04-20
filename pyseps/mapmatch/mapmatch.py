@@ -147,14 +147,18 @@ class MapMatch(PrimitiveActor):
         return False
 
     def consume(self, doc):
+
+        'Submits matching documents to the defined queue along with the defined header.'
+
+
         result = self.match(self.rules.keys(), self.map, doc["data"])
         if result != False:
             doc["header"]["rule"]=result
             self.putData(doc)
-            # for queue in self.rules[result]["queue"]:
-            #     doc["header"].update(self.rules[result]["queue"][queue])
-            #     print doc
-            #     self.putData(doc)
+            for item in self.rules[result]["queue"]:
+                for queue in item:
+                    doc["header"].update(item[queue])
+            self.putData(doc)
 
     def shutdown(self):
         self.logging.info('Shutdown')
