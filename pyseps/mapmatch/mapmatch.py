@@ -45,6 +45,7 @@ class MapMatch(PrimitiveActor):
 
         - name (str):    The instance name when initiated.
         - ruledir (str): The directory containing the rulesThe filename containing the matching rules.
+        - type (str):    The type of matching engine. (sequential, mapmatch)
 
     Queues:
 
@@ -113,7 +114,6 @@ class MapMatch(PrimitiveActor):
         '''
         Matches the record
         '''
-
         state={}
         #state={x:0 for x in rulenames}
         for x in rulenames:
@@ -135,10 +135,10 @@ class MapMatch(PrimitiveActor):
         '''
 
         if rule.startswith('re:'):
-            if re.search(rule[3:],data):
+            if re.search(rule[3:],str(data)):
                 return True
         elif rule.startswith('!re:'):
-            if not re.search(rule[4:],data):
+            if not re.search(rule[4:],str(data)):
                 return True
         else:
             self.logging.warn("%s is an invalid match rule."%(rule))
@@ -150,15 +150,13 @@ class MapMatch(PrimitiveActor):
 
         'Submits matching documents to the defined queue along with the defined header.'
 
-
         result = self.match(self.rules.keys(), self.map, doc["data"])
         if result != False:
             doc["header"]["rule"]=result
-            self.putData(doc)
-            for item in self.rules[result]["queue"]:
-                for queue in item:
-                    doc["header"].update(item[queue])
-            self.putData(doc)
+            for queue in self.rules[result]["queue"]:
+                for name in queue:
+                    doc["header"].update(queue[name])
+                    self.putData(doc, name)
 
     def shutdown(self):
         self.logging.info('Shutdown')
