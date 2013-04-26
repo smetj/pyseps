@@ -46,7 +46,8 @@ setuptools.setup(
     description="A PYthon Simple Event Procsessing System.",
     author="Jelle Smet",
     url="https://github.com/smetj/pyseps",
-    install_requires=['wishbone','gevent_inotifyx','PyYAML','pymongo'],
+    dependency_links = ['http://github.com/smetj/wishbone/tarball/master#egg=wishbone-0.3.1beta'],
+    install_requires=['wishbone>=0.3.1beta','gevent_inotifyx','PyYAML','pymongo'],
     packages=setuptools.find_packages(),
     include_package_data=True,
     entry_points={
