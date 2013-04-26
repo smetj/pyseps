@@ -3,35 +3,54 @@ MapMatch
 
 The MapMatch engine converts a sequence of evaluation rules into a map to
 process the most requested evaluations first in an attempt to have a
-statistical advantage over dumb sequential evaluation of all rules until a
-match is found. If a match occurs the document is forwarded to the WishBone
-queue associated with the matching rule.
+statistical advantage over sequential evaluation of all rules until a match is
+found. If a match occurs the document is forwarded to the WishBone queue
+associated with the matching rule.
 
-Matching rules:
----------------
+
+Matching documents using a set of rules:
+----------------------------------------
+
+Matching rules are written in YAML format.  Each rule which consists out of
+one or more conditions is stored in 1 file. A directory contains a collection
+of rules. Only files with extension .yml are processed.  MapMatch monitors the
+directory for changes and automatically reloads the rules when required.
+The directory can be set using the *ruledir* variable.
 
 Format:
 ~~~~~~~
 
-The file containing the matching rules must be valid JSON and should have
-following structure:
+A rule should be valid YAML format and should have a similar structure:
 
 ::
 
-	{
-	"rule0":{"queue":{"broker":{"broker_key":"rule0","broker_exchange":""}},"conditions":{"1":"re:a"}},
-	"rule1":{"queue":{"broker":{"broker_key":"rule1","broker_exchange":""}},"conditions":{"1":"re:b","2":"re:c"}},
-	"rule2":{"queue":{"broker":{"broker_key":"rule2","broker_exchange":""}},"conditions":{"1":"re:d","2":"re:e","3":"re:f"}},
-	"rule3":{"queue":{"broker":{"broker_key":"rule3","broker_exchange":""}},"conditions":{"1":"re:g","2":"re:h","3":"re:i","4":"re:j"}},
-	"rule4":{"queue":{"broker":{"broker_key":"rule4","broker_exchange":""}},"conditions":{"1":"re:k","2":"re:l","3":"re:m","4":"re:n","5":"re:o"}}
-	}
+    ---
+    condition:
+        "hostnotificationid": re:\d*
+        "check_command": re:check:host.alive
+        "hostgroupnames": re:.*?development.*
+
+    queue:
+        - amqp:
+            broker_exchange: ""
+            broker_key: ""
+    ...
+
 
 Breakdown of a rule:
 ~~~~~~~~~~~~~~~~~~~~
 
-A rule consists out of one or more conditions.  Each individual condition
-within a rule should match before the complete rule is considered to be a
-match.
+A rule consists out of 2 main parts: condition and queue.
+
+The condition part is a dictionary containing the conditions to evaluate
+against the desired document fields.  The individual conditions relate with a
+logical AND to each other.
+
+The queue part consists out of a list of WishBone queues to which matching
+documents should be submitted.  Non pre-existing queues are automatically
+created.  You should make sure there is a Wishbone module connected to the
+defined MapMatch modules, otherwise matching documents will just pile up
+there.
 
 The type of condition is embedded in the condition definition.  currently
 there is support for regexes.  Other condition types might be added in the
