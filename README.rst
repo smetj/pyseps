@@ -1,8 +1,6 @@
 PySeps
 ======
 
-Disclaimer: PySeps is currently a proof of concept and incomplete.
-
 What?
 -----
 A Python based Simple Event Processing Server framework. Consume a stream of
