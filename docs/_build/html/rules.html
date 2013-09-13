@@ -1,0 +1,154 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Rules &mdash; PySeps 0.3.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="PySeps 0.3.0 documentation" href="index.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">PySeps 0.3.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="rules">
+<h1>Rules<a class="headerlink" href="#rules" title="Permalink to this headline">¶</a></h1>
+<p>Rules are written in YAML format on disk.  Each rule which consists out of one
+or more conditions is stored in 1 file. A directory contains a collection of
+rules. Only files with extension .yml are processed.  MapMatch monitors the
+directory for changes and automatically reloads the rules when required. The
+directory can be set using the <em>ruledir</em> variable.</p>
+<div class="section" id="format">
+<h2>Format<a class="headerlink" href="#format" title="Permalink to this headline">¶</a></h2>
+<p>A rule should be valid YAML format and should have a similar structure:</p>
+<div class="highlight-python"><pre>---
+condition:
+    "hostnotificationid": re:\d*
+    "check_command": re:check:host.alive
+    "hostgroupnames": re:.*?development.*
+
+queue:
+    - amqp:
+        broker_exchange: ""
+        broker_key: ""
+...</pre>
+</div>
+</div>
+<div class="section" id="breakdown-of-a-rule">
+<h2>Breakdown of a rule<a class="headerlink" href="#breakdown-of-a-rule" title="Permalink to this headline">¶</a></h2>
+<p>A rule consists out of 2 main parts: condition and queue.</p>
+<p>The condition part is a dictionary containing the conditions to evaluate
+against the desired document fields.  The individual conditions relate with a
+logical AND to each other.</p>
+<p>The queue part consists out of a list of WishBone queues to which matching
+documents should be submitted.  Non existing queues are automatically created.
+You should make sure there is a Wishbone module connected to the defined
+MapMatch modules, otherwise matching documents will just pile up there.  Each
+defined Wishbone queue contains a dictionary which will be added to the header
+section of the document submitted to the said queue.</p>
+<p>The type of condition is embedded in the condition definition.  currently
+there is support for regexes.  Other condition types might be added in the
+future when the need arises.</p>
+</div>
+<div class="section" id="regex">
+<h2>regex<a class="headerlink" href="#regex" title="Permalink to this headline">¶</a></h2>
+<p>Condition which have to be regular expressions should start with <em>re:</em> or
+<em>!re</em> for positive and negative regular expressions respectively.</p>
+<p>examples:</p>
+<p><em>&#8220;re:qwerty&#8221;</em>
+Matches if the string contains &#8220;qwerty&#8221;.</p>
+<p><em>&#8220;re:^qwerty.</em>&#8220;*
+Matches if the string starts with &#8220;qwerty&#8221;.</p>
+<p><em>&#8221;!re:^qwerty&#8221;</em>
+Matches if the string is NOT equal to &#8220;qwerty&#8221;.</p>
+<p><em>&#8221;!re:qwerty&#8221;</em>
+Matches if the string does NOT contain&#8221;qwerty&#8221;.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Rules</a><ul>
+<li><a class="reference internal" href="#format">Format</a></li>
+<li><a class="reference internal" href="#breakdown-of-a-rule">Breakdown of a rule</a></li>
+<li><a class="reference internal" href="#regex">regex</a></li>
+</ul>
+</li>
+</ul>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">PySeps 0.3.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Jelle Smet.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

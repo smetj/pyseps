@@ -21,43 +21,63 @@
 #  MA 02110-1301, USA.
 #
 #
-
 import setuptools
-import inspect
-from os import path
-from sys import version_info
+import re
+import ast
 
+###############################################################
 PROJECT = 'pyseps'
-VERSION = '0.1'
+MODULE = 'MapMatch'
+VERSION = "0.3.0"
+FILE = "pyseps/mapmatch.py"
+AUTHOR = "Jelle Smet"
+URL='https://github.com/smetj/pyseps'
+INSTALL_REQUIRES= [ 'wishbone','gevent_inotifyx','PyYAML' ]
+ENTRY_POINTS={
+    "pyseps": "mapmatch = pyseps:MapMatch"
+}
+###############################################################
 
-#The goal is to have a .pth file so it can be included when creating RPMs
-module_path=path.dirname((path.dirname(inspect.getfile(setuptools))))
-pth_dir="./%s-%s-py%s.egg"%(PROJECT,
-    VERSION,
-    '.'.join(str(i) for i in version_info[0:2]))
-pth=open ("%s/%s.pth"%(module_path,PROJECT),'w')
-pth.write(pth_dir)
-pth.close()
+m = ast.parse(''.join(open(FILE)))
+for node in m.body:
+    if isinstance(node, ast.ClassDef) and node.name == MODULE:
+            DOCSTRING=ast.get_docstring(node)
 
+try:
+    with open ("README.md", "w") as readme:
+        readme.write(PROJECT+"\n")
+        readme.write("="*len(PROJECT)+"\n\n")
+        readme.write("version: %s\n\n"%(VERSION))
+        readme.write(DOCSTRING+"\n")
+except:
+    pass
+
+try:
+    with open('README.md') as readme:
+        long_description = readme.read()
+except:
+    long_description=''
 
 setuptools.setup(
     name=PROJECT,
     version=VERSION,
-    description="A PYthon Simple Event Procsessing System.",
-    author="Jelle Smet",
-    url="https://github.com/smetj/pyseps",
-    dependency_links = ['http://github.com/smetj/wishbone/tarball/master#egg=wishbone-0.3.1beta'],
-    install_requires=['wishbone>=0.3.1beta','gevent_inotifyx','PyYAML','pymongo'],
+    description=re.search(".*?\*\*(.*?)\*\*",DOCSTRING).group(1),
+    long_description=long_description,
+    author=AUTHOR,
+    url=URL,
+    install_requires=[ "wishbone" ] + INSTALL_REQUIRES,
     packages=setuptools.find_packages(),
-    include_package_data=True,
-    entry_points={
-        'console_scripts': [
-        'pyseps = pyseps.pyseps:main'
-        ],
-
-    'pyseps.module': [
-                'TailingCursor=pyseps.tailingcursor:TailingCursor',
-                'MapMatch=pyseps.mapmatch:MapMatch'
-        ],
-    }
+    zip_safe=True,
+    entry_points=ENTRY_POINTS,
+    classifiers=['Development Status :: 4 - Beta',
+                 'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
+                 'Programming Language :: Python',
+                 'Programming Language :: Python :: 2',
+                 'Programming Language :: Python :: 2.6',
+                 'Programming Language :: Python :: 2.7',
+                 'Programming Language :: Python :: 3.3',
+                 'Programming Language :: Python :: Implementation :: PyPy',
+                 'Intended Audience :: Developers',
+                 'Intended Audience :: System Administrators',
+                 ],
 )

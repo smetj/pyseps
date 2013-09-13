@@ -23,7 +23,7 @@
 #
 #
 
-from wishbone.toolkit import PrimitiveActor
+from wishbone import Actor
 from gevent import spawn
 from glob import glob
 from os import path
@@ -33,9 +33,11 @@ import yaml
 import re
 
 
-class MapMatch(PrimitiveActor):
-    '''**The MapMatch module matches documents against a user provided ruleset
-    and submits the matching documents to a Wishbone queue of choice.**
+class MapMatch(Actor):
+    '''** A Wishbone module to evaluate match rules against a document stream. **
+
+    The MapMatch module matches documents against a user provided ruleset
+    and submits the matching documents to a Wishbone queue of choice.
 
     The set of rules is converted in such a way that the fields which will most
     likely match the most are evaluated first.  This to speed up evaluation.
@@ -43,22 +45,27 @@ class MapMatch(PrimitiveActor):
 
     Parameters:
 
-        - name (str):    The instance name when initiated.
-        - ruledir (str): The directory containing the rulesThe filename containing the matching rules.
-        - type (str):    The type of matching engine. (sequential, mapmatch)
+        - name (str):       The instance name when initiated.
+
+        - ruledir (str):    The directory containing the rules.
+                            Default: ./
 
     Queues:
 
-        - inbox:    Incoming events.
-        - outbox:   Outgoing events.
-        - rules:    Incoming rules.
+        - inbox:    Incoming events to evaluate.
+
+    Matching events will be submitted to the queue defined in the rules.
+
     '''
 
     def __init__(self, name, ruledir='./'):
-        PrimitiveActor.__init__(self, name)
-        self.createQueue("rules")
+        Actor.__init__(self, name)
+        self.ruledir=ruledir
         (self.map,self.rules) = self.readDirectory(ruledir)
-        spawn(self.monitorDirectory,ruledir)
+
+
+    def preHook(self):
+        spawn(self.monitorDirectory, self.ruledir)
 
     def monitorDirectory(self, directory):
         '''Monitors the given directory for changes.'''
@@ -66,7 +73,7 @@ class MapMatch(PrimitiveActor):
         self.logging.info('Monitoring %s'%(directory))
         fd = inotify.init()
         wb = inotify.add_watch(fd, directory, inotify.IN_CLOSE_WRITE+inotify.IN_DELETE)
-        while self.block() == True:
+        while self.loop() == True:
             events = inotify.get_events(fd)
             (self.map,self.rules) = self.readDirectory(directory)
 
@@ -75,9 +82,9 @@ class MapMatch(PrimitiveActor):
         containing the rules.'''
         self.logging.info('Loading rules from directory %s'%(directory))
         rules={}
-        for filename in glob("%s/*.yml"%(directory)):
+        for filename in glob("%s/*.yaml"%(directory)):
             f=open (filename,'r')
-            rules[path.basename(filename).rstrip(".yml")]=yaml.load("\n".join(f.readlines()))
+            rules[path.basename(filename).rstrip(".yaml")]=yaml.load("\n".join(f.readlines()))
             f.close()
         return self.generateMap(rules)
 
@@ -119,7 +126,6 @@ class MapMatch(PrimitiveActor):
         for x in rulenames:
             state[x]=0
         for field in map:
-
             if field[0] in data:
                 for match in field[1]:
                     if self.__typeMatch(match[0], data[field[0]]):
@@ -146,17 +152,14 @@ class MapMatch(PrimitiveActor):
 
         return False
 
-    def consume(self, doc):
+    def consume(self, event):
+        '''Submits matching documents to the defined queue along with
+        the defined header.'''
 
-        'Submits matching documents to the defined queue along with the defined header.'
-
-        result = self.match(self.rules.keys(), self.map, doc["data"])
+        result = self.match(self.rules.keys(), self.map, event["data"])
         if result != False:
-            doc["header"]["rule"]=result
+            event["header"].update({self.name:{"rule":result}})
             for queue in self.rules[result]["queue"]:
                 for name in queue:
-                    doc["header"].update(queue[name])
-                    self.putData(doc, name)
-
-    def shutdown(self):
-        self.logging.info('Shutdown')
+                    event["header"][self.name].update(queue[name])
+                    getattr(self.queuepool, name).put(event)

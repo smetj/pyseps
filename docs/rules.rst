@@ -1,24 +1,15 @@
-MapMatch
-========
+=====
+Rules
+=====
 
-The MapMatch engine converts a sequence of evaluation rules into a map to
-process the most requested evaluations first in an attempt to have a
-statistical advantage over sequential evaluation of all rules until a match is
-found. If a match occurs the document is forwarded to the WishBone queue
-associated with the matching rule.
+Rules are written in YAML format on disk.  Each rule which consists out of one
+or more conditions is stored in 1 file. A directory contains a collection of
+rules. Only files with extension .yml are processed.  MapMatch monitors the
+directory for changes and automatically reloads the rules when required. The
+directory can be set using the *ruledir* variable.
 
-
-Matching documents using a set of rules:
-----------------------------------------
-
-Matching rules are written in YAML format.  Each rule which consists out of
-one or more conditions is stored in 1 file. A directory contains a collection
-of rules. Only files with extension .yml are processed.  MapMatch monitors the
-directory for changes and automatically reloads the rules when required.
-The directory can be set using the *ruledir* variable.
-
-Format:
-~~~~~~~
+Format
+------
 
 A rule should be valid YAML format and should have a similar structure:
 
@@ -37,8 +28,8 @@ A rule should be valid YAML format and should have a similar structure:
     ...
 
 
-Breakdown of a rule:
-~~~~~~~~~~~~~~~~~~~~
+Breakdown of a rule
+-------------------
 
 A rule consists out of 2 main parts: condition and queue.
 
@@ -57,8 +48,8 @@ The type of condition is embedded in the condition definition.  currently
 there is support for regexes.  Other condition types might be added in the
 future when the need arises.
 
-regex:
-~~~~~~
+regex
+-----
 
 Condition which have to be regular expressions should start with *re:* or
 *!re* for positive and negative regular expressions respectively.
@@ -76,19 +67,3 @@ Matches if the string is NOT equal to "qwerty".
 
 *"!re:qwerty"*
 Matches if the string does NOT contain"qwerty".
-
-
-Usage:
-------
-
-https://github.com/smetj/experiments/tree/master/pyseps/MapMatch
-
-	$ pyseps debug --config mapmatch.json
-
-
-Disclaimer:
------------
-
-*Install the latest Wishbone module from GitHub
-https://github.com/smetj/wishbone since this module requires queue auto-
-creation.*
