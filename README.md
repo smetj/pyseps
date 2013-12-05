@@ -17,7 +17,7 @@ Parameters:
     - name (str):       The instance name when initiated.
 
     - ruledir (str):    The directory containing the rules.
-                        Default: ./
+                        Default: rules/
 
 Queues:
 

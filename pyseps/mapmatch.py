@@ -30,10 +30,11 @@ from os import path
 import gevent_inotifyx as inotify
 import json
 import yaml
-import re
+from matchrules import MatchRules
 
 
 class MapMatch(Actor):
+
     '''** A Wishbone module to evaluate match rules against a document stream. **
 
     The MapMatch module matches documents against a user provided ruleset
@@ -48,7 +49,7 @@ class MapMatch(Actor):
         - name (str):       The instance name when initiated.
 
         - ruledir (str):    The directory containing the rules.
-                            Default: ./
+                            Default: rules/
 
     Queues:
 
@@ -58,11 +59,11 @@ class MapMatch(Actor):
 
     '''
 
-    def __init__(self, name, ruledir='./'):
+    def __init__(self, name, ruledir='rules/'):
         Actor.__init__(self, name)
         self.ruledir=ruledir
         (self.map,self.rules) = self.readDirectory(ruledir)
-
+        self.match=MatchRules()
 
     def preHook(self):
         spawn(self.monitorDirectory, self.ruledir)
@@ -128,28 +129,11 @@ class MapMatch(Actor):
         for field in map:
             if field[0] in data:
                 for match in field[1]:
-                    if self.__typeMatch(match[0], data[field[0]]):
+                    if self.match.eval(match[0], data[field[0]]):
                         for rule in match[1]:
                             state[rule[0]]+=1
                             if rule[1] == state[rule[0]] and state[rule[0]] <= len(data):
                                 return rule[0]
-        return False
-
-    def __typeMatch(self, rule, data):
-        '''
-        Executes different forms of matching.
-        '''
-
-        if rule.startswith('re:'):
-            if re.search(rule[3:],str(data)):
-                return True
-        elif rule.startswith('!re:'):
-            if not re.search(rule[4:],str(data)):
-                return True
-        else:
-            self.logging.warn("%s is an invalid match rule."%(rule))
-            return False
-
         return False
 
     def consume(self, event):
