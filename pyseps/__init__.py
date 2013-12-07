@@ -23,3 +23,5 @@
 #
 
 from mapmatch import MapMatch
+from readrules import ReadRulesDisk
+from matchrules import MatchRules

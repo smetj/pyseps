@@ -25,13 +25,8 @@
 
 from wishbone import Actor
 from gevent import spawn
-from glob import glob
-from os import path
-import gevent_inotifyx as inotify
-import json
-import yaml
-from matchrules import MatchRules
-
+from pyseps.matchrules import MatchRules
+from pyseps.readrules import ReadRulesDisk
 
 class MapMatch(Actor):
 
@@ -59,35 +54,23 @@ class MapMatch(Actor):
 
     '''
 
-    def __init__(self, name, ruledir='rules/'):
+    def __init__(self, name, ruledir='file://rules/'):
         Actor.__init__(self, name)
         self.ruledir=ruledir
-        (self.map,self.rules) = self.readDirectory(ruledir)
         self.match=MatchRules()
+        self.queuepool.inbox.putLock()
+        self.read=ReadRulesDisk(ruledir)
 
     def preHook(self):
-        spawn(self.monitorDirectory, self.ruledir)
+        spawn(self.getRules)
 
-    def monitorDirectory(self, directory):
-        '''Monitors the given directory for changes.'''
-
-        self.logging.info('Monitoring %s'%(directory))
-        fd = inotify.init()
-        wb = inotify.add_watch(fd, directory, inotify.IN_CLOSE_WRITE+inotify.IN_DELETE)
-        while self.loop() == True:
-            events = inotify.get_events(fd)
-            (self.map,self.rules) = self.readDirectory(directory)
-
-    def readDirectory(self, directory):
-        '''Reads the content of the given directory and creates a dict
-        containing the rules.'''
-        self.logging.info('Loading rules from directory %s'%(directory))
-        rules={}
-        for filename in glob("%s/*.yaml"%(directory)):
-            f=open (filename,'r')
-            rules[path.basename(filename).rstrip(".yaml")]=yaml.load("\n".join(f.readlines()))
-            f.close()
-        return self.generateMap(rules)
+    def getRules(self):
+        self.rules=self.read.readDirectory()
+        self.map=self.generateMap(self.rules)
+        self.queuepool.inbox.putUnlock()
+        while self.loop():
+            self.rules=self.read.get()
+            self.generateMap(self.rules)
 
     def generateMap(self, rules):
 
@@ -116,9 +99,9 @@ class MapMatch(Actor):
             optimized[item] = sorted([ (key,optimized[item][key]) for key in optimized[item] ], key=lambda value: len(value[1]), reverse=True)
 
         optimized = sorted(optimized.iteritems(), key=lambda value: sum(len(v[1]) for v in value[1]), reverse=True)
-        return (optimized, rules)
+        return optimized
 
-    def match(self, rulenames, map, data):
+    def executeMatch(self, rulenames, map, data):
         '''
         Matches the record
         '''
@@ -129,7 +112,7 @@ class MapMatch(Actor):
         for field in map:
             if field[0] in data:
                 for match in field[1]:
-                    if self.match.eval(match[0], data[field[0]]):
+                    if self.match.do(match[0], data[field[0]]):
                         for rule in match[1]:
                             state[rule[0]]+=1
                             if rule[1] == state[rule[0]] and state[rule[0]] <= len(data):
@@ -140,7 +123,7 @@ class MapMatch(Actor):
         '''Submits matching documents to the defined queue along with
         the defined header.'''
 
-        result = self.match(self.rules.keys(), self.map, event["data"])
+        result = self.executeMatch(self.rules.keys(), self.map, event["data"])
         if result != False:
             event["header"].update({self.name:{"rule":result}})
             for queue in self.rules[result]["queue"]:

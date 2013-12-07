@@ -28,7 +28,7 @@ import ast
 ###############################################################
 PROJECT = 'pyseps'
 MODULE = 'MapMatch'
-VERSION = "0.3.0"
+VERSION = "0.3.1"
 FILE = "pyseps/mapmatch.py"
 AUTHOR = "Jelle Smet"
 URL='https://github.com/smetj/pyseps'

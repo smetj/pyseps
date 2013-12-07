@@ -50,9 +50,9 @@ class MatchRules():
                         "="     : self.equal,
                         "!="    : self.notEqual,
                         "in"    : self.hasMember
-                        }
+                    }
 
-    def eval(self, rule, data):
+    def do(self, rule, data):
         s = rule.split(':')
         try:
             return self.methods[s[0]](':'.join(s[1:]), data)

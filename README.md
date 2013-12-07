@@ -1,7 +1,7 @@
 pyseps
 ======
 
-version: 0.3.0
+version: 0.3.1
 
 ** A Wishbone module to evaluate match rules against a document stream. **
 
