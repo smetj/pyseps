@@ -43,7 +43,7 @@ class MapMatch(Actor):
 
         - name (str):       The instance name when initiated.
 
-        - ruledir (str):    The directory containing the rules.
+        - location (str):   The directory containing the rules.
                             Default: rules/
 
     Queues:
@@ -54,12 +54,12 @@ class MapMatch(Actor):
 
     '''
 
-    def __init__(self, name, ruledir='file://rules/'):
+    def __init__(self, name, location='rules/'):
         Actor.__init__(self, name)
-        self.ruledir=ruledir
+        self.location=location
         self.match=MatchRules()
         self.queuepool.inbox.putLock()
-        self.read=ReadRulesDisk(ruledir)
+        self.read=ReadRulesDisk(location)
 
     def preHook(self):
         spawn(self.getRules)
@@ -68,6 +68,7 @@ class MapMatch(Actor):
         self.rules=self.read.readDirectory()
         self.map=self.generateMap(self.rules)
         self.queuepool.inbox.putUnlock()
+
         while self.loop():
             self.rules=self.read.get()
             self.generateMap(self.rules)
@@ -105,6 +106,7 @@ class MapMatch(Actor):
         '''
         Matches the record
         '''
+
         state={}
         #state={x:0 for x in rulenames}
         for x in rulenames:
@@ -128,5 +130,4 @@ class MapMatch(Actor):
             event["header"].update({self.name:{"rule":result}})
             for queue in self.rules[result]["queue"]:
                 for name in queue:
-                    event["header"][self.name].update(queue[name])
                     getattr(self.queuepool, name).put(event)

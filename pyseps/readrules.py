@@ -24,7 +24,6 @@
 
 from gevent import spawn
 import gevent_inotifyx as inotify
-from urlparse import urlparse
 from gevent import event
 from glob import glob
 from os import path
@@ -38,16 +37,16 @@ class ReadRulesDisk():
 
     Parameters:
 
-        url(string):        Uniform resource locator.
-                            default: file://rules
+        location(string):   The directory to load rules from.
+                            default: rules/
 
         loop(obj):          Wishbone loop condition object.
 
         logging(obj):       Wishbone logging object.
     '''
 
-    def __init__(self, url="file://rules/"):
-        self.location=urlparse(url)
+    def __init__(self, location="rules/"):
+        self.location=location
         self.wait=event.Event()
         self.wait.set()
         self.__rules={}
@@ -57,7 +56,7 @@ class ReadRulesDisk():
         '''Monitors the given directory for changes.'''
 
         fd = inotify.init()
-        wb = inotify.add_watch(fd, self.location.path, inotify.IN_CLOSE_WRITE+inotify.IN_DELETE)
+        wb = inotify.add_watch(fd, self.location, inotify.IN_CLOSE_WRITE+inotify.IN_DELETE)
         while True:
             self.wait.clear()
             events = inotify.get_events(fd)
@@ -70,7 +69,7 @@ class ReadRulesDisk():
         containing the rules.'''
 
         rules={}
-        for filename in glob("%s/*.yaml"%(self.location.path)):
+        for filename in glob("%s/*.yaml"%(self.location)):
             f=open (filename,'r')
             rules[path.basename(filename).rstrip(".yaml")]=yaml.load("\n".join(f.readlines()))
             f.close()
