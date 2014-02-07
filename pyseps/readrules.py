@@ -26,7 +26,7 @@ from gevent import spawn
 import gevent_inotifyx as inotify
 from gevent import event
 from glob import glob
-from os import path
+import os
 import yaml
 
 class ReadRulesDisk():
@@ -50,7 +50,11 @@ class ReadRulesDisk():
         self.wait=event.Event()
         self.wait.set()
         self.__rules={}
-        spawn(self.monitorDirectory)
+
+        if os.access (self.location, os.R_OK):
+            spawn(self.monitorDirectory)
+        else:
+            raise Exception ("Directory %s is not readable. Please verify."%(self.location))
 
     def monitorDirectory(self):
         '''Monitors the given directory for changes.'''
@@ -61,7 +65,6 @@ class ReadRulesDisk():
             self.wait.clear()
             events = inotify.get_events(fd)
             self.__rules = self.readDirectory()
-            self.first_result.set()
             self.wait.set()
 
     def readDirectory(self):
@@ -71,8 +74,9 @@ class ReadRulesDisk():
         rules={}
         for filename in glob("%s/*.yaml"%(self.location)):
             f=open (filename,'r')
-            rules[path.basename(filename).rstrip(".yaml")]=yaml.load("\n".join(f.readlines()))
+            rules[os.path.basename(filename).rstrip(".yaml")]=yaml.load("\n".join(f.readlines()))
             f.close()
+
         return rules
 
     def get(self):
