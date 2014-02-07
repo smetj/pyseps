@@ -1,8 +1,6 @@
 pyseps
 ======
 
-version: 0.3.1
-
 ** A Wishbone module to evaluate match rules against a document stream. **
 
 The MapMatch module matches documents against a user provided ruleset
