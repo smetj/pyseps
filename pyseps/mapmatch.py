@@ -68,12 +68,12 @@ class MapMatch(Actor):
 
         while self.loop():
             try:
-
-                self.read=ReadRulesDisk(self.location)
-                self.rules=self.read.readDirectory()
-                self.map=self.generateMap(self.rules)
-                self.queuepool.inbox.putUnlock()
-                break
+                while self.loop():
+                    self.read=ReadRulesDisk(self.location)
+                    self.rules=self.read.readDirectory()
+                    self.map=self.generateMap(self.rules)
+                    self.queuepool.inbox.putUnlock()
+                    break
 
                 while self.loop():
                     self.rules=self.read.get()

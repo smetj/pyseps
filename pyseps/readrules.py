@@ -48,7 +48,7 @@ class ReadRulesDisk():
     def __init__(self, location="rules/"):
         self.location=location
         self.wait=event.Event()
-        self.wait.set()
+        self.wait.clear()
         self.__rules={}
 
         if os.access (self.location, os.R_OK):
