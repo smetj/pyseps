@@ -24,7 +24,7 @@
 #
 
 from wishbone import Actor
-from gevent import spawn
+from gevent import spawn, sleep
 from pyseps.matchrules import MatchRules
 from pyseps.readrules import ReadRulesDisk
 
@@ -59,19 +59,29 @@ class MapMatch(Actor):
         self.location=location
         self.match=MatchRules()
         self.queuepool.inbox.putLock()
-        self.read=ReadRulesDisk(location)
+
 
     def preHook(self):
         spawn(self.getRules)
 
     def getRules(self):
-        self.rules=self.read.readDirectory()
-        self.map=self.generateMap(self.rules)
-        self.queuepool.inbox.putUnlock()
 
         while self.loop():
-            self.rules=self.read.get()
-            self.generateMap(self.rules)
+            try:
+
+                self.read=ReadRulesDisk(self.location)
+                self.rules=self.read.readDirectory()
+                self.map=self.generateMap(self.rules)
+                self.queuepool.inbox.putUnlock()
+                break
+
+                while self.loop():
+                    self.rules=self.read.get()
+                    self.generateMap(self.rules)
+
+            except Exception as err:
+                self.logging.warning("Problem reading rule directory.  Reason: %s"%(err))
+                sleep(1)
 
     def generateMap(self, rules):
 
@@ -114,11 +124,15 @@ class MapMatch(Actor):
         for field in map:
             if field[0] in data:
                 for match in field[1]:
-                    if self.match.do(match[0], data[field[0]]):
-                        for rule in match[1]:
-                            state[rule[0]]+=1
-                            if rule[1] == state[rule[0]] and state[rule[0]] <= len(data):
-                                return rule[0]
+                    try:
+                        if self.match.do(match[0], data[field[0]]):
+                            for rule in match[1]:
+                                state[rule[0]]+=1
+                                if rule[1] == state[rule[0]] and state[rule[0]] <= len(data):
+                                    return rule[0]
+                    except Exception as err:
+                        self.logging.warn("Failed to evaluate condition. Purged  Reason: %s"%(err))
+                        return False
         return False
 
     def consume(self, event):
@@ -127,7 +141,11 @@ class MapMatch(Actor):
 
         result = self.executeMatch(self.rules.keys(), self.map, event["data"])
         if result != False:
+            self.logging.debug("rule %s matches %s"%(result, event["data"]))
             event["header"].update({self.name:{"rule":result}})
             for queue in self.rules[result]["queue"]:
                 for name in queue:
+                    event["header"][self.name].update(queue[name])
                     getattr(self.queuepool, name).put(event)
+        else:
+            self.logging.debug("No match for event: %s"%(event["data"]))
