@@ -9,9 +9,9 @@ different types of query engines.
 
 How?
 ----
-PySeps is build on the WishBone framework which allows you to build coroutine
+PySeps is build on the Wishbone framework which allows you to build coroutine
 based event pipelines.  PySeps delivers a set of modules which can be plugged
-into the WishBone framework.  Each module acts as a different engine to
+into the Wishbone framework.  Each module acts as a different engine to
 perform the document matching.
 
 Engines:
@@ -19,24 +19,19 @@ Engines:
 
 MapMatch:
 ~~~~~~~~~
-https://github.com/smetj/pyseps/tree/master/pyseps/mapmatch
+module: pyseps.mapmatch
 
 The MapMatch engine converts a sequence of evaluation rules into a map to
 process the most requested evaluations first in an attempt to have a
 statistical advantage over dumb sequential evaluation of all rules until a
-match is found. If a match occurs the document is forwarded to the WishBone
+match is found. If a match occurs the document is forwarded to the Wishbone
 queue associated with the matching rule.
 
-TailingCursor:
+SequentialMatch
 ~~~~~~~~~~~~~~
-https://github.com/smetj/pyseps/tree/master/pyseps/tailingcursor
+module: pyseps.sequentialmatch
 
-By creating a tailing cursor containing a MongoDB query and by applying that
-cursor to a capped collection which constantly receives new documents,  we
-have a quite powerful filtering mechanism to extract from a constant stream
-the documents we want.
-
-.. image:: docs/diagram.png
+Sequentially matches rules against all incoming events.
 
 
 Setup
@@ -45,16 +40,16 @@ Setup
 Pypi
 ~~~~
 
-	$ easy_install pyseps
+    $ easy_install pyseps
 
 GitHub
 ~~~~~~
 
-	$ git clone https://github.com/smetj/pyseps.git
+    $ git clone https://github.com/smetj/pyseps.git
 
-	$ cd pyseps
+    $ cd pyseps
 
-	$ python setup.py install
+    $ python setup.py install
 
 Examples
 --------
