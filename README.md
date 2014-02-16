@@ -19,7 +19,7 @@ Engines:
 
 MapMatch:
 ~~~~~~~~~
-module: pyseps.mapmatch
+pyseps.mapmatch
 
 The MapMatch engine converts a sequence of evaluation rules into a map to
 process the most requested evaluations first in an attempt to have a
@@ -27,9 +27,9 @@ statistical advantage over dumb sequential evaluation of all rules until a
 match is found. If a match occurs the document is forwarded to the Wishbone
 queue associated with the matching rule.
 
-SequentialMatch
-~~~~~~~~~~~~~~
-module: pyseps.sequentialmatch
+SequentialMatch:
+~~~~~~~~~~~~~~~
+pyseps.sequentialmatch
 
 Sequentially matches rules against all incoming events.
 
