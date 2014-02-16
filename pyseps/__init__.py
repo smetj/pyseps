@@ -23,5 +23,6 @@
 #
 
 from mapmatch import MapMatch
+from sequentialmatch import SequentialMatch
 from readrules import ReadRulesDisk
 from matchrules import MatchRules
