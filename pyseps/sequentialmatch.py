@@ -64,14 +64,17 @@ class SequentialMatch(Actor):
     def getRules(self):
 
         while self.loop():
+            self.logging.info("Monitoring directory %s for changes"%(self.location))
             try:
                 while self.loop():
                     self.read=ReadRulesDisk(self.location)
                     self.rules=self.read.readDirectory()
                     self.queuepool.inbox.putUnlock()
+                    self.logging.info("New set of rules loaded from disk")
                     break
                 while self.loop():
                     self.rules=self.read.get()
+                    self.logging.info("New set of rules loaded from disk")
             except Exception as err:
                 self.logging.warning("Problem reading rule directory.  Reason: %s"%(err))
                 sleep(1)
@@ -79,17 +82,22 @@ class SequentialMatch(Actor):
     def consume(self, event):
         '''Submits matching documents to the defined queue along with
         the defined header.'''
-
         for rule in self.rules:
-            for field in event[data]:
-                for condition in rule:
-                    result = self.match.do(condition, field)
-                    if result:
-                        self.logging.debug("rule %s matches %s"%(result, event["data"]))
-                        event["header"].update({self.name:{"rule":result}})
-                        for queue in self.rules[result]["queue"]:
-                            for name in queue:
-                                event["header"][self.name].update(queue[name])
-                                getattr(self.queuepool, name).put(event)
-        if not result:
-            self.logging.debug("No match for event: %s"%(event["data"]))
+            if self.evaluateConditions(self.rules[rule]["condition"], event["data"]):
+                self.logging.debug("rule %s matches %s"%(rule, event["data"]))
+                event["header"].update({self.name:{"rule":rule}})
+                for queue in self.rules[rule]["queue"]:
+                    for name in queue:
+                        event["header"][self.name].update(queue[name])
+                        getattr(self.queuepool, name).put(event)
+                return
+            else:
+                self.logging.debug("Rule %s does not match event: %s"%(rule, event["data"]))
+
+
+    def evaluateConditions(self, conditions, fields):
+        for condition in conditions:
+            for field in fields:
+                if not self.match.do(conditions[condition], fields[field]):
+                    return False
+        return True
