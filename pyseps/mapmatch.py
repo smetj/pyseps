@@ -4,7 +4,7 @@
 #
 #  mapmatch.py
 #
-#  Copyright 2013 Jelle Smet <development@smetj.net>
+#  Copyright 2014 Jelle Smet <development@smetj.net>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -32,12 +32,21 @@ class MapMatch(Actor):
 
     '''** A Wishbone module to evaluate match rules against a document stream. **
 
-    The MapMatch module matches documents against a user provided ruleset
+    The MapMatch module matches documents against a set of user provided rules
     and submits the matching documents to a Wishbone queue of choice.
 
-    The set of rules is converted in such a way that the fields which will most
-    likely match the most are evaluated first.  This to speed up evaluation.
-    Keep in mind, once a rule matched, further matching stops.
+    The ruleset is broken down into each individual condition and placed into
+    a weighted map. The field which has to evaluated the most has the highest
+    weight and will be evaluated first.  If the number of matching conditions
+    matches the number of required conditions for a rule that rule wins.
+
+    As a consequence, when multiple identical rules exist in the total
+    ruleset, the one which has the conditions which are requested the most
+    will win.
+
+    If you have a very large ruleset rules will be evaluated quicker since a
+    winner is elected faster.
+
 
     Parameters:
 
@@ -85,14 +94,8 @@ class MapMatch(Actor):
 
     def generateMap(self, rules):
 
-        ''' This function is called upon each
-        document arriving in the self.rules queue. One document is expected to
-        contain all matching rules.  Upon receiving a new set of rules, the
-        previous one is discarded. Converts data into a Map which gives us
-        statistical advantage in finding matches.
-
-        The outgoing map has following structure:
-        '''
+        '''The function converts the rules into a weighted map containing all
+        conditions.'''
 
         self.logging.info('A new set of rules received.')
         optimized={}
