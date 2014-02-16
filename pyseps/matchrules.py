@@ -52,8 +52,8 @@ class MatchRules():
                         "in"    : self.hasMember
                     }
 
-    def do(self, rule, data):
-        s = rule.split(':')
+    def do(self, condition, data):
+        s = condition.split(':')
         try:
             return self.methods[s[0]](':'.join(s[1:]), data)
         except KeyError:
