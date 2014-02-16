@@ -83,7 +83,7 @@ class SequentialMatch(Actor):
         for rule in self.rules:
             for field in event[data]:
                 for condition in rule:
-                    result = self.match.do(condition, field):
+                    result = self.match.do(condition, field)
                     if result:
                         self.logging.debug("rule %s matches %s"%(result, event["data"]))
                         event["header"].update({self.name:{"rule":result}})
