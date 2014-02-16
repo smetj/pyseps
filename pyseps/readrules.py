@@ -39,10 +39,6 @@ class ReadRulesDisk():
 
         location(string):   The directory to load rules from.
                             default: rules/
-
-        loop(obj):          Wishbone loop condition object.
-
-        logging(obj):       Wishbone logging object.
     '''
 
     def __init__(self, location="rules/"):
