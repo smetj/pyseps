@@ -27,21 +27,19 @@ import ast
 
 ###############################################################
 PROJECT = 'pyseps'
-MODULE = 'MapMatch'
-VERSION = "0.3.3"
-FILE = "pyseps/mapmatch.py"
+MODULE = 'pyseps'
+VERSION = "0.3.4"
+FILE = "pyseps/__init__.py"
 AUTHOR = "Jelle Smet"
 URL='https://github.com/smetj/pyseps'
 INSTALL_REQUIRES= [ 'wishbone','gevent_inotifyx','PyYAML' ]
 ENTRY_POINTS={
-    "pyseps": "mapmatch = pyseps:MapMatch"
+    "pyseps": [
+        "mapmatch = pyseps:MapMatch",
+        "sequentialmatch = pyseps:SequentialMatch"
+    ]
 }
 ###############################################################
-
-m = ast.parse(''.join(open(FILE)))
-for node in m.body:
-    if isinstance(node, ast.ClassDef) and node.name == MODULE:
-            DOCSTRING=ast.get_docstring(node)
 
 try:
     with open ("README.md", "w") as readme:
@@ -61,7 +59,7 @@ except:
 setuptools.setup(
     name=PROJECT,
     version=VERSION,
-    description=re.search(".*?\*\*(.*?)\*\*",DOCSTRING).group(1),
+    description="A set of modules to match documents in a document stream.",
     long_description=long_description,
     author=AUTHOR,
     url=URL,
