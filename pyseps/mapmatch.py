@@ -47,6 +47,38 @@ class MapMatch(Actor):
     If you have a very large ruleset rules will be evaluated quicker since a
     winner is elected faster.
 
+    Rules on disk are in YAML format and consist out of 2 parts:
+
+        condition
+        ---------
+
+        The condition part contains the individual conditions which have to
+        match for the complete rule to match.
+
+        queue
+        -----
+
+        The queue section contains a list of dictionaries/maps each containing
+        1 key with another dictionary/map as a value.  These key/value pairs
+        are added to the *header section* of the event and stored under the
+        queue name key.
+
+    Example:
+    --------
+
+        condition:
+            "check_command": re:check:host.alive
+            "hostproblemid": re:\d*
+            "hostgroupnames": in:tag:development
+
+        queue:
+            - email:
+                from: monitoring@yourdomain.com
+                to:
+                    - oncall@yourdomain.com
+                subject: UMI - Host  {{ hostname }} is  {{ hoststate }}.
+                template: host_email_alert
+
 
     Parameters:
 
