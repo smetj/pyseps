@@ -27,7 +27,7 @@ from setuptools.command.test import test as TestCommand
 import sys
 
 PROJECT = 'pyseps'
-VERSION = '0.3.4'
+VERSION = '0.3.5'
 install_requires=[ 'wishbone','gevent_inotifyx','PyYAML' ]
 
 try:
