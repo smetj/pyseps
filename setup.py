@@ -21,52 +21,32 @@
 #  MA 02110-1301, USA.
 #
 #
-import setuptools
-import re
-import ast
 
-###############################################################
+from setuptools import setup, find_packages
+from setuptools.command.test import test as TestCommand
+import sys
+
 PROJECT = 'pyseps'
-MODULE = 'pyseps'
-VERSION = "0.3.4"
-FILE = "pyseps/__init__.py"
-AUTHOR = "Jelle Smet"
-URL='https://github.com/smetj/pyseps'
-INSTALL_REQUIRES= [ 'wishbone','gevent_inotifyx','PyYAML' ]
-ENTRY_POINTS={
-    "pyseps": [
-        "mapmatch = pyseps:MapMatch",
-        "sequentialmatch = pyseps:SequentialMatch"
-    ]
-}
-###############################################################
+VERSION = '0.3.5'
+install_requires=[ 'wishbone','gevent_inotifyx','PyYAML' ]
 
 try:
-    with open ("README.md", "w") as readme:
-        readme.write(PROJECT+"\n")
-        readme.write("="*len(PROJECT)+"\n\n")
-        readme.write("version: %s\n\n"%(VERSION))
-        readme.write(DOCSTRING+"\n")
-except:
-    pass
+    long_description = open('README.rst', 'rt').read()
+except IOError:
+    long_description = ''
 
-try:
-    with open('README.md') as readme:
-        long_description = readme.read()
-except:
-    long_description=''
-
-setuptools.setup(
+setup(
     name=PROJECT,
     version=VERSION,
-    description="A set of modules to match documents in a document stream.",
+
+    description='A set of modules to match documents in a document stream.',
     long_description=long_description,
-    author=AUTHOR,
-    url=URL,
-    install_requires=[ "wishbone" ] + INSTALL_REQUIRES,
-    packages=setuptools.find_packages(),
-    zip_safe=True,
-    entry_points=ENTRY_POINTS,
+
+    author='Jelle Smet',
+    author_email='development@smetj.net',
+
+    url='https://github.com/smetj/pyseps',
+
     classifiers=['Development Status :: 4 - Beta',
                  'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
                  'Programming Language :: Python',
@@ -78,4 +58,17 @@ setuptools.setup(
                  'Intended Audience :: Developers',
                  'Intended Audience :: System Administrators',
                  ],
+    platforms=['Linux'],
+    scripts=[],
+    provides=[],
+    install_requires=install_requires,
+    namespace_packages=[],
+    packages=find_packages(),
+    zip_safe=False,
+    entry_points={
+    "pyseps": [
+        "mapmatch = pyseps:MapMatch",
+        "sequentialmatch = pyseps:SequentialMatch"
+    ]
+    }
 )
