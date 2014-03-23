@@ -115,7 +115,7 @@ class SequentialMatch(Actor):
         '''Submits matching documents to the defined queue along with
         the defined header.'''
         for rule in self.rules:
-            if self.evaluateConditions(self.rules[rule]["condition"], event["data"]):
+            if self.evaluateCondition(self.rules[rule]["condition"], event["data"]):
                 self.logging.debug("rule %s matches %s"%(rule, event["data"]))
                 event["header"].update({self.name:{"rule":rule}})
                 for queue in self.rules[rule]["queue"]:
@@ -127,9 +127,8 @@ class SequentialMatch(Actor):
                 self.logging.debug("Rule %s does not match event: %s"%(rule, event["data"]))
 
 
-    def evaluateConditions(self, conditions, fields):
+    def evaluateCondition(self, conditions, fields):
         for condition in conditions:
-            for field in fields:
-                if not self.match.do(conditions[condition], fields[field]):
-                    return False
-        return True
+            if condition in fields:
+                return self.match.do(conditions[condition], fields[condition])
+        return False
