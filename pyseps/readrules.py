@@ -60,11 +60,16 @@ class ReadRulesDisk():
         fd = inotify.init()
         wb = inotify.add_watch(
             fd, self.location, inotify.IN_CLOSE_WRITE + inotify.IN_DELETE)
+        self.__rules = self.readDirectory()
+
         while True:
             self.wait.clear()
             events = inotify.get_events(fd)
-            self.__rules = self.readDirectory()
-            self.wait.set()
+            current_rules = self.readDirectory()
+
+            if cmp(current_rules, self.__rules) != 0:
+                self.__rules = current_rules
+                self.wait.set()
 
     def readDirectory(self):
         '''Reads the content of the given directory and creates a dict
