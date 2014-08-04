@@ -133,8 +133,8 @@ class MapMatch(Actor):
         optimized = {}
         for rule in rules:
             for condition in rules[rule]["condition"]:
-                if optimized.has_key(condition):
-                    if optimized[condition].has_key(rules[rule]["condition"][condition]):
+                if condition in optimized:
+                    if rules[rule]["condition"][condition] in optimized[condition]:
                         optimized[condition][rules[rule]["condition"][condition]].append(
                             (rule, len(rules[rule]["condition"])))
                     else:
