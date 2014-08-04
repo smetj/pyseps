@@ -29,6 +29,7 @@ from glob import glob
 import os
 import yaml
 
+
 class ReadRulesDisk():
 
     '''
@@ -42,21 +43,23 @@ class ReadRulesDisk():
     '''
 
     def __init__(self, location="rules/"):
-        self.location=location
-        self.wait=event.Event()
+        self.location = location
+        self.wait = event.Event()
         self.wait.clear()
-        self.__rules={}
+        self.__rules = {}
 
-        if os.access (self.location, os.R_OK):
+        if os.access(self.location, os.R_OK):
             spawn(self.monitorDirectory)
         else:
-            raise Exception ("Directory %s is not readable. Please verify."%(self.location))
+            raise Exception(
+                "Directory %s is not readable. Please verify." % (self.location))
 
     def monitorDirectory(self):
         '''Monitors the given directory for changes.'''
 
         fd = inotify.init()
-        wb = inotify.add_watch(fd, self.location, inotify.IN_CLOSE_WRITE+inotify.IN_DELETE)
+        wb = inotify.add_watch(
+            fd, self.location, inotify.IN_CLOSE_WRITE + inotify.IN_DELETE)
         while True:
             self.wait.clear()
             events = inotify.get_events(fd)
@@ -67,10 +70,11 @@ class ReadRulesDisk():
         '''Reads the content of the given directory and creates a dict
         containing the rules.'''
 
-        rules={}
-        for filename in glob("%s/*.yaml"%(self.location)):
-            f=open (filename,'r')
-            rules[os.path.basename(filename).rstrip(".yaml")]=yaml.load("\n".join(f.readlines()))
+        rules = {}
+        for filename in glob("%s/*.yaml" % (self.location)):
+            f = open(filename, 'r')
+            rules[os.path.basename(filename).rstrip(".yaml")] = yaml.load(
+                "\n".join(f.readlines()))
             f.close()
 
         return rules
