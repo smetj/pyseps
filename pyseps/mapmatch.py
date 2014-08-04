@@ -24,7 +24,7 @@
 #
 
 from wishbone import Actor
-from gevent import spawn, sleep
+from gevent import spawn, sleep, event
 from pyseps.matchrules import MatchRules
 from pyseps.readrules import ReadRulesDisk
 
@@ -101,6 +101,8 @@ class MapMatch(Actor):
         self.location = location
         self.match = MatchRules()
         self.queuepool.inbox.putLock()
+        self.lock = event.Event()
+        self.lock.set()
 
     def preHook(self):
         spawn(self.getRules)
@@ -118,7 +120,10 @@ class MapMatch(Actor):
 
                 while self.loop():
                     self.rules = self.read.get()
-                    self.generateMap(self.rules)
+                    self.lock.wait()
+                    self.lock.clear()
+                    self.map = self.generateMap(self.rules)
+                    self.lock.set()
 
             except Exception as err:
                 self.logging.warning(
@@ -150,6 +155,7 @@ class MapMatch(Actor):
 
         optimized = sorted(optimized.iteritems(), key=lambda value: sum(
             len(v[1]) for v in value[1]), reverse=True)
+
         return optimized
 
     def executeMatch(self, rulenames, map, data):
@@ -180,6 +186,8 @@ class MapMatch(Actor):
         '''Submits matching documents to the defined queue along with
         the defined header.'''
 
+        self.lock.wait()
+        self.lock.clear()
         result = self.executeMatch(self.rules.keys(), self.map, event["data"])
         if result is not False:
             self.logging.debug("rule %s matches %s" % (result, event["data"]))
@@ -190,3 +198,4 @@ class MapMatch(Actor):
                     getattr(self.queuepool, name).put(event)
         else:
             self.logging.debug("No match for event: %s" % (event["data"]))
+        self.lock.set()
