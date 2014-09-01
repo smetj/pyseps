@@ -3,7 +3,7 @@
 #
 #  setup.py
 #
-#  Copyright 2013 Jelle Smet <development@smetj.net>
+#  Copyright 2014 Jelle Smet <development@smetj.net>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ from setuptools.command.test import test as TestCommand
 import sys
 
 PROJECT = 'pyseps'
-VERSION = '0.3.6'
-install_requires=[ 'wishbone','gevent_inotifyx','PyYAML' ]
+VERSION = '0.3.7'
+install_requires = ['wishbone', 'gevent_inotifyx', 'PyYAML']
 
 try:
     long_description = open('README.rst', 'rt').read()
@@ -66,9 +66,9 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     entry_points={
-    "pyseps": [
-        "mapmatch = pyseps:MapMatch",
-        "sequentialmatch = pyseps:SequentialMatch"
-    ]
+        "wishbone.contrib.flow": [
+            "mapmatch = pyseps:MapMatch",
+            "sequentialmatch = pyseps:SequentialMatch"
+        ]
     }
 )
