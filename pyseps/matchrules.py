@@ -26,6 +26,7 @@ import re
 
 
 class MatchRules():
+
     '''
     Executes different forms of matching.
 
@@ -39,18 +40,17 @@ class MatchRules():
     in:     Check whether element is in list
     '''
 
-
     def __init__(self):
-        self.methods={  "re"    : self.regex,
-                        "!re"   : self.negRegex,
-                        ">"     : self.more,
-                        ">="    : self.moreOrEqual,
-                        "<"     : self.less,
-                        "<="    : self.lessOrEqual,
-                        "="     : self.equal,
-                        "!="    : self.notEqual,
-                        "in"    : self.hasMember
-                    }
+        self.methods = {"re": self.regex,
+                        "!re": self.negRegex,
+                        ">": self.more,
+                        ">=": self.moreOrEqual,
+                        "<": self.less,
+                        "<=": self.lessOrEqual,
+                        "=": self.equal,
+                        "!=": self.notEqual,
+                        "in": self.hasMember
+                        }
 
     def do(self, condition, data):
         s = condition.split(':')

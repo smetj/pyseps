@@ -28,6 +28,7 @@ from gevent import spawn, sleep
 from pyseps.matchrules import MatchRules
 from pyseps.readrules import ReadRulesDisk
 
+
 class SequentialMatch(Actor):
 
     '''** A Wishbone module to evaluate match rules against a document stream. **
@@ -85,10 +86,9 @@ class SequentialMatch(Actor):
 
     def __init__(self, name, location='rules/'):
         Actor.__init__(self, name)
-        self.location=location
-        self.match=MatchRules()
+        self.location = location
+        self.match = MatchRules()
         self.queuepool.inbox.putLock()
-
 
     def preHook(self):
         spawn(self.getRules)
@@ -96,19 +96,19 @@ class SequentialMatch(Actor):
     def getRules(self):
 
         while self.loop():
-            self.logging.info("Monitoring directory %s for changes"%(self.location))
+            self.logging.info("Monitoring directory %s for changes" % (self.location))
             try:
                 while self.loop():
-                    self.read=ReadRulesDisk(self.location)
-                    self.rules=self.read.readDirectory()
+                    self.read = ReadRulesDisk(self.location)
+                    self.rules = self.read.readDirectory()
                     self.queuepool.inbox.putUnlock()
                     self.logging.info("New set of rules loaded from disk")
                     break
                 while self.loop():
-                    self.rules=self.read.get()
+                    self.rules = self.read.get()
                     self.logging.info("New set of rules loaded from disk")
             except Exception as err:
-                self.logging.warning("Problem reading rule directory.  Reason: %s"%(err))
+                self.logging.warning("Problem reading rule directory.  Reason: %s" % (err))
                 sleep(1)
 
     def consume(self, event):
@@ -116,16 +116,15 @@ class SequentialMatch(Actor):
         the defined header.'''
         for rule in self.rules:
             if self.evaluateCondition(self.rules[rule]["condition"], event["data"]):
-                self.logging.debug("rule %s matches %s"%(rule, event["data"]))
-                event["header"].update({self.name:{"rule":rule}})
+                self.logging.debug("rule %s matches %s" % (rule, event["data"]))
+                event["header"].update({self.name: {"rule": rule}})
                 for queue in self.rules[rule]["queue"]:
                     for name in queue:
                         event["header"][self.name].update(queue[name])
                         getattr(self.queuepool, name).put(event)
                 return
             else:
-                self.logging.debug("Rule %s does not match event: %s"%(rule, event["data"]))
-
+                self.logging.debug("Rule %s does not match event: %s" % (rule, event["data"]))
 
     def evaluateCondition(self, conditions, fields):
         for condition in conditions:
