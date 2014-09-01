@@ -60,10 +60,10 @@ class MatchRules():
             raise Exception("Unknown condition")
 
     def regex(self, value, data):
-        return bool(re.search(value, data))
+        return bool(re.search(value, str(data)))
 
     def negRegex(self, value, data):
-        return not bool(re.search(value, data))
+        return not bool(re.search(value, str(data)))
 
     def more(self, value, data):
         return float(data) > float(value)
