@@ -81,28 +81,40 @@ class MapMatch(Actor):
                 template: host_email_alert
 
 
+    When connecting modules to non-existing queues, they will be automatically
+    created.  When a document machtes and is submitted to a queue which does
+    not exist then the messages will be discarded.
+
+
     Parameters:
 
-        - name (str):       The instance name when initiated.
+        - name(str)
+           |  The name of the module.
 
-        - location (str):   The directory containing the rules.
-                            Default: rules/
+        - size(int)
+           |  The default max length of each queue.
+
+        - frequency(int)
+           |  The frequency in seconds to generate metrics.
+
+        - location(str)("rules/")
+           |  The directory containing rules.
+
 
     Queues:
 
-        - inbox:    Incoming events to evaluate.
-
-    Matching events will be submitted to the queue defined in the rules.
+        - inbox
+           |  Incoming events
 
     '''
 
-    def __init__(self, name, location='rules/'):
-        Actor.__init__(self, name)
+    def __init__(self, name, size=100, frequency=1, location='rules/'):
+        Actor.__init__(self, name, size, frequency)
+        self.pool.createQueue("inbox")
+        self.pool.createQueue("outbox")
+        self.registerConsumer(self.consume, "inbox")
         self.location = location
         self.match = MatchRules()
-        self.queuepool.inbox.putLock()
-        self.lock = event.Event()
-        self.lock.set()
 
     def preHook(self):
         spawn(self.getRules)
@@ -110,24 +122,20 @@ class MapMatch(Actor):
     def getRules(self):
 
         while self.loop():
+            self.logging.info("Monitoring directory %s for changes" % (self.location))
             try:
                 while self.loop():
                     self.read = ReadRulesDisk(self.location)
                     self.rules = self.read.readDirectory()
                     self.map = self.generateMap(self.rules)
-                    self.queuepool.inbox.putUnlock()
+                    self.logging.info("New set of rules loaded from disk")
                     break
-
                 while self.loop():
                     self.rules = self.read.get()
-                    self.lock.wait()
-                    self.lock.clear()
                     self.map = self.generateMap(self.rules)
-                    self.lock.set()
-
+                    self.logging.info("New set of rules loaded from disk")
             except Exception as err:
-                self.logging.warning(
-                    "Problem reading rule directory.  Reason: %s" % (err))
+                self.logging.warning("Problem reading rules directory.  Reason: %s" % (err))
                 sleep(1)
 
     def generateMap(self, rules):
@@ -186,8 +194,6 @@ class MapMatch(Actor):
         '''Submits matching documents to the defined queue along with
         the defined header.'''
 
-        self.lock.wait()
-        self.lock.clear()
         result = self.executeMatch(self.rules.keys(), self.map, event["data"])
         if result is not False:
             self.logging.debug("rule %s matches %s" % (result, event["data"]))
@@ -195,7 +201,6 @@ class MapMatch(Actor):
             for queue in self.rules[result]["queue"]:
                 for name in queue:
                     event["header"][self.name].update(queue[name])
-                    getattr(self.queuepool, name).put(event)
+                    self.submit(event, self.pool.getQueue(name))
         else:
             self.logging.debug("No match for event: %s" % (event["data"]))
-        self.lock.set()

@@ -93,7 +93,7 @@ class SequentialMatch(Actor):
 
     '''
 
-    def __init__(self, name, size, frequency, location='rules/'):
+    def __init__(self, name, size=100, frequency=1, location='rules/'):
         Actor.__init__(self, name, size, frequency)
         self.location = location
         self.match = MatchRules()
@@ -117,7 +117,7 @@ class SequentialMatch(Actor):
                     self.rules = self.read.get()
                     self.logging.info("New set of rules loaded from disk")
             except Exception as err:
-                self.logging.warning("Problem reading rule directory.  Reason: %s" % (err))
+                self.logging.warning("Problem reading rules directory.  Reason: %s" % (err))
                 sleep(1)
 
     def consume(self, event):
