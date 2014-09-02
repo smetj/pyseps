@@ -28,7 +28,7 @@ import sys
 
 PROJECT = 'pyseps'
 VERSION = '0.3.7'
-install_requires = ['wishbone', 'gevent_inotifyx', 'PyYAML']
+install_requires = ['wishbone >= 1.0.0', 'gevent_inotifyx', 'PyYAML']
 
 try:
     long_description = open('README.rst', 'rt').read()

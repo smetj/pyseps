@@ -3,39 +3,84 @@ PySeps
 
 What?
 -----
-A Python based Simple Event Processing Server framework. Consume a stream of
-documents and forward matching documents to another destination using
-different types of query engines.
+
+A set of Wishbone flow modules to execute pattern matching on a JSON document
+stream.
 
 How?
 ----
-PySeps is build on the Wishbone framework which allows you to build coroutine
-based event pipelines.  PySeps delivers a set of modules which can be plugged
-into the Wishbone framework.  Each module acts as a different engine to
-perform the document matching.
 
-Engines:
---------
+The module expects JSON documents coming into the "inbox" queue.  These
+documents are then evaluated against one or more conditions.  When all
+conditions are fulfilled it will be submitted to the outgoing queue as defined
+by the condition.
 
-MapMatch:
-~~~~~~~~~
-pyseps.mapmatch
+Conditions are stored into YAML files.  1 YAML file is 1 condition:
 
-The MapMatch engine converts a sequence of evaluation rules into a map to
-process the most requested evaluations first in an attempt to have a
-statistical advantage over dumb sequential evaluation of all rules until a
-match is found. If a match occurs the document is forwarded to the Wishbone
-queue associated with the matching rule.
+    ---
+    condition:
+        "check_command": re:check:host.alive
+        "hostgroupnames": in:tag:development
 
-SequentialMatch:
-~~~~~~~~~~~~~~~
-pyseps.sequentialmatch
-
-Sequentially matches rules against all incoming events.
+    queue:
+        - email:
+            from: monitoring@yourdomain.com
+            to:
+                - oncall@yourdomain.com
+            subject: UMI - Host  {{ hostname }} is  {{ hoststate }}.
+            template: host_email_alert
+    ...
 
 
-Setup
------
+The above example rule will submit the event to the module's queue named
+"email" if all defined conditions are met.  The key/values defined under the
+"email" section will be added to the event's header.  It's up to the user to
+connect another module to the "email" queue to enable further processing of
+the event.
+
+These alert conditions are automatically read from disk. The rules directory
+is monitored for changes.  The moment the ruleset changes, they are reloaded.
+
+
+The mapmatch or sequentialmatch modules have to be bootstrapped in a Wishbone
+setup:
+
+    ---
+    modules:
+
+        incoming_events:
+            module: wishbone.input.tcp
+
+        json:
+            module: wishbone.decode.json
+
+        match_engine:
+            module: wishbone.contrib.flow.sequentialmatch
+
+        template:
+            module: wishbone.function.template
+            arguments:
+                key: match_engine
+                location: templates/
+                header_templates: ["subject"]
+
+        stdout:
+            module: wishbone.output.stdout
+            arguments:
+                complete: true
+
+    routingtable:
+      - incoming_events.outbox      -> json.inbox
+      - json.outbox                 -> match_engine.inbox
+      - match_engine.email          -> template.inbox
+      - template.outbox             -> stdout.inbox
+    ...
+
+
+    $ wishbone debug --config example.yaml
+
+Installation
+------------
 
 Pypi
 ~~~~
