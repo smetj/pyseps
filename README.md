@@ -77,6 +77,7 @@ setup:
     ...
 
 
+
     $ wishbone debug --config example.yaml
 
 Installation
