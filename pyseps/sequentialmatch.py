@@ -31,19 +31,21 @@ from pyseps.readrules import ReadRulesDisk
 
 class SequentialMatch(Actor):
 
-    '''** A Wishbone module to evaluate match rules against a document stream. **
+    '''**Pattern matching on a JSON document stream.**
 
-    This module sequentially evaluates all rules against the incoming documents.
+    This module evaluates all rules sequentually against incoming documents.
     Multiple matching rules are possible.
 
     Rules on disk are in YAML format and consist out of 2 parts:
 
         condition
+        ~~~~~~~~~
 
         The condition part contains the individual conditions which have to
         match for the complete rule to match.
 
-        queue:
+        queue
+        ~~~~~
 
         The queue section contains a list of dictionaries/maps each containing
         1 key with another dictionary/map as a value.  These key/value pairs
@@ -51,7 +53,8 @@ class SequentialMatch(Actor):
         queue name key.
 
 
-    Example:
+    Example
+    ~~~~~~~
 
         condition:
             "check_command": re:check:host.alive
@@ -65,6 +68,7 @@ class SequentialMatch(Actor):
                     - oncall@yourdomain.com
                 subject: UMI - Host  {{ hostname }} is  {{ hoststate }}.
                 template: host_email_alert
+
 
     When connecting modules to non-existing queues, they will be automatically
     created.  When a document machtes and is submitted to a queue which does

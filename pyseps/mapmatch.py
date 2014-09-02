@@ -31,41 +31,39 @@ from pyseps.readrules import ReadRulesDisk
 
 class MapMatch(Actor):
 
-    '''** A Wishbone module to evaluate match rules against a document stream. **
+    '''**Pattern matching on a JSON document stream.**
 
     The MapMatch module matches documents against a set of user provided rules
-    and submits the matching documents to a Wishbone queue of choice.
+    and submits the matching documents to the Wishbone queue of choice.
 
     The ruleset is broken down into each individual condition and placed into
-    a weighted map. The field which has to evaluated the most has the highest
-    weight and will be evaluated first.  If the number of matching conditions
-    matches the number of required conditions for a rule that rule wins.
+    a weighted map. The field which has to be evaluated the most has the
+    highest weight and will be evaluated first.  If the number of matching
+    conditions matches the number of required conditions for a rule it wins.
 
     As a consequence, when multiple identical rules exist in the total
     ruleset, the one which has the conditions which are requested the most
     will win.
 
-    If you have a very large ruleset rules will be evaluated quicker since a
-    winner is elected faster.
-
     Rules on disk are in YAML format and consist out of 2 parts:
 
         condition
-        ---------
+        ~~~~~~~~~
 
         The condition part contains the individual conditions which have to
         match for the complete rule to match.
 
         queue
-        -----
+        ~~~~~
 
         The queue section contains a list of dictionaries/maps each containing
         1 key with another dictionary/map as a value.  These key/value pairs
         are added to the *header section* of the event and stored under the
         queue name key.
 
-    Example:
-    --------
+
+    Example
+    ~~~~~~~
 
         condition:
             "check_command": re:check:host.alive
