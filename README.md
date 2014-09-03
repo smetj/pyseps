@@ -106,3 +106,7 @@ Examples
 
 See https://github.com/smetj/experiments/tree/master/pyseps
 
+Article
+-------
+
+http://smetj.net/running_alertmachine_under_docker.html
