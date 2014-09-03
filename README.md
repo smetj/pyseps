@@ -17,6 +17,8 @@ by the condition.
 
 Conditions are stored into YAML files.  1 YAML file is 1 condition:
 
+::
+
     ---
     condition:
         "check_command": re:check:host.alive
@@ -44,6 +46,8 @@ is monitored for changes.  The moment the ruleset changes, they are reloaded.
 
 The mapmatch or sequentialmatch modules have to be bootstrapped in a Wishbone
 setup:
+
+::
 
     ---
     modules:
