@@ -136,7 +136,6 @@ class SequentialMatch(Actor):
                     for name in queue:
                         event["header"][self.name].update(queue[name])
                         self.submit(event, self.pool.getQueue(name))
-                return
             else:
                 self.logging.debug("Rule %s does not match event: %s" % (rule, event["data"]))
 
